@@ -27,7 +27,7 @@ const nextConfig = {
     basePath: basePath,
 };
 
-const withCSS = require('@zeit/next-css')(cssConfig);
+const withCSS = require('@zeit/next-css');
 module.exports = withCSS(nextConfig);
 
 // module.exports = {
