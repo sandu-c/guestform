@@ -1,14 +1,16 @@
 // next.config.js
-const withCSS = require('@zeit/next-css');
 
-module.exports = withCSS({
+const pwaConfig = {
     cssLoaderOptions: {
         url: false
     }
-});
+};
+
+const withCSS = require('@zeit/next-css')(pwaConfig);
+
+// module.exports = withCSS();
 
 const repo = 'sandu-c'
-
 const isGithubActions = process.env.GITHUB_ACTIONS || false
 
 let assetPrefix = ''
@@ -22,10 +24,12 @@ if (isGithubActions) {
   basePath = `/${repo}`
 }
 
-module.exports = {
-  assetPrefix: assetPrefix,
-  basePath: basePath,
-}
+const nextConfig = {
+    assetPrefix: assetPrefix,
+    basePath: basePath,
+};
+
+module.exports = withCSS(nextConfig);
 
 // module.exports = {
 //   // …
