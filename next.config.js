@@ -6,8 +6,6 @@ const cssConfig = {
     }
 };
 
-const withCSS = require('@zeit/next-css')(cssConfig);
-
 // module.exports = withCSS();
 
 const repo = 'sandu-c'
@@ -29,6 +27,7 @@ const nextConfig = {
     basePath: basePath,
 };
 
+const withCSS = require('@zeit/next-css')(cssConfig);
 module.exports = withCSS(nextConfig);
 
 // module.exports = {
