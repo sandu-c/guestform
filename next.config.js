@@ -8,7 +8,7 @@ const cssConfig = {
 
 // module.exports = withCSS();
 
-const repo = 'sandu-c'
+const repo = '/'
 const isGithubActions = process.env.GITHUB_ACTIONS || false
 
 let assetPrefix = ''
@@ -28,7 +28,7 @@ const nextConfig = {
 };
 
 const withCSS = require('@zeit/next-css');
-module.exports = withCSS(nextConfig);
+module.exports = withCSS;
 
 // module.exports = {
 //   // …
