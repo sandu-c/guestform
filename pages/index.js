@@ -7,6 +7,7 @@ const Home = () => {
     surname1: '',
     surname2: '',
     email: '',
+    sex: '',
     subject: 'StaticForms - Contact Form',
     honeypot: '', // if any value received in this field, form submission will be ignored.
     message: '',
@@ -119,13 +120,22 @@ const Home = () => {
                         <input
                           className='input'
                           type='text'
-                          placeholder='Garcia'
+                          placeholder='Rodriguez'
                           name='surname2'
                           onChange={handleChange}
                           required
                         />
                       </div>
                     </div>
+                    <div className='field'>
+                      <label className='label'>Sex</label>
+                      <div className='control'>
+                        <select name="cars" id="cars">
+                          <option value="Hombre">Hombre</option>
+                          <option value="Mujer">Mujer</option>
+                        </select> 
+                      </div>
+                    </div>        
 
                             
                     <div className='field'>
