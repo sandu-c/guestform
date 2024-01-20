@@ -4,6 +4,8 @@ import 'bulma/css/bulma.min.css';
 const Home = () => {
   const [contact, setContact] = useState({
     name: '',
+    surname1: '',
+    surname2: '',
     email: '',
     subject: 'StaticForms - Contact Form',
     honeypot: '', // if any value received in this field, form submission will be ignored.
@@ -86,18 +88,46 @@ const Home = () => {
                     onSubmit={handleSubmit}
                   >
                     <div className='field'>
-                      <label className='label'>Your Name</label>
+                      <label className='label'>Nombre</label>
                       <div className='control'>
                         <input
                           className='input'
                           type='text'
-                          placeholder='Name'
+                          placeholder='Antonio'
                           name='name'
                           onChange={handleChange}
                           required
                         />
                       </div>
                     </div>
+                    <div className='field'>
+                      <label className='label'>Primer apellido</label>
+                      <div className='control'>
+                        <input
+                          className='input'
+                          type='text'
+                          placeholder='Garcia'
+                          name='surname1'
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className='field'>
+                      <label className='label'>Segundo apellido</label>
+                      <div className='control'>
+                        <input
+                          className='input'
+                          type='text'
+                          placeholder='Garcia'
+                          name='surname2'
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                            
                     <div className='field'>
                       <label className='label'>Your Email</label>
                       <div className='control'>
