@@ -24,6 +24,9 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  NODE_OPTIONS: '--openssl-legacy-provider'
+
 jobs:
   # Build job
   build:
