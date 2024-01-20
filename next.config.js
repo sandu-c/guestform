@@ -8,7 +8,7 @@ const cssConfig = {
 
 // module.exports = withCSS();
 
-const repo = '/'
+const repo = ''
 const isGithubActions = process.env.GITHUB_ACTIONS || false
 
 let assetPrefix = ''
