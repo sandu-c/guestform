@@ -25,4 +25,4 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.4.0 
         with:
           branch: master
-          folder: out
+          folder: docs
