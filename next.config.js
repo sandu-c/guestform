@@ -6,3 +6,12 @@ module.exports = withCSS({
         url: false
     }
 });
+
+const repo = 'sandu-c'
+const assetPrefix = `/${repo}/`
+const basePath = `/${repo}`
+
+module.exports = {
+  assetPrefix: assetPrefix,
+  basePath: basePath,
+}
