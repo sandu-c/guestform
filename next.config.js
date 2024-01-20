@@ -1,12 +1,12 @@
 // next.config.js
 
-const pwaConfig = {
+const cssConfig = {
     cssLoaderOptions: {
         url: false
     }
 };
 
-const withCSS = require('@zeit/next-css')(pwaConfig);
+const withCSS = require('@zeit/next-css')(cssConfig);
 
 // module.exports = withCSS();
 
