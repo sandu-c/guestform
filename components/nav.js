@@ -49,6 +49,15 @@ const Nav = () => (
         text-decoration: none;
         font-size: 13px;
       }
+
+      fieldset {
+        font-family: "Montserrat", "sans-serif"; /* just a custom font */
+        width: 300em;                            /* fixed width for the box */
+        border-radius: 0.5em;                   /* applied border radius */
+        border: 0.1em solid #ccc;               /* custom border style */
+        background-color: #fffde1;              /* added a background color */
+        box-shadow: 0.08em 0.05em 0.08em #ccc;  /* added a soft box shadow */
+      }
     `}</style>
   </nav>
 )
