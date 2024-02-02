@@ -4,7 +4,7 @@ import 'bulma/css/bulma.min.css';
 import 'bulma-calendar/dist/css/bulma-calendar.min.css';
 // import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 // import SignatureCanvas from '../components/SignatureCanvas';
-
+import FormSection from '../components/FormSection';
 import React from 'react';
 
 import EncodingUtils from '../components/utils/encodingUtils';
@@ -18,6 +18,44 @@ import PhoneInput from '../components/PhoneInput';
 
 
 const Home = () => {
+  const [selectedOption, setSelectedOption] = useState(1);
+  const [sections, setSections] = useState(new Array(selectedOption).fill(false));
+  const [currentSection, setCurrentSection] = useState(0);
+
+  const handleOptionChange = (e) => {
+    setSelectedOption(parseInt(e.target.value));
+    setSections(new Array(parseInt(e.target.value)).fill(false));
+    setForm(generateNewForm(selectedOption));
+  };
+
+  const handleSectionToggle = (index) => {
+    setCurrentSection(index);
+    const newSections = [...sections];
+    newSections[index] = !newSections[index];
+    newSections[currentSection] = true;
+
+    setSections(newSections);
+  };
+
+
+  const handleContinue2 = () => {
+    const nextSection = currentSection + 1;
+    if (nextSection < sections.length) {
+      setSections((prevSections) => {
+        const newSections = [...prevSections];
+        newSections[currentSection] = false;
+        newSections[nextSection] = true;
+        return newSections;
+      });
+      setCurrentSection(nextSection);
+    } else if (currentSection === sections.length - 1) {
+      setSections((prevSections) => {
+        const newSections = [...prevSections];
+        newSections[currentSection] = false; // Collapse the last section
+        return newSections;
+      });
+    }
+  }
 
   const formRef = useRef(null);
   const router = useRouter();
@@ -62,7 +100,7 @@ const Home = () => {
     id: ''
   });
 
-  const [form, setForm] = useState({
+  const initialFormState = {
     name: '',
     $docu: '',
     $surname: '',
@@ -82,7 +120,23 @@ const Home = () => {
     message: '',
     replyTo: '@', // this will set replyTo of email to email address entered in the form
     accessKey: ''
-  });
+  };
+
+  const [form, setForm] = useState(initialFormState);
+
+  // Function to generate a new form state with names concatenated with numbers
+  const generateNewForm = (num) => {
+    let newFormState = {};
+    for (let i = 0; i <= num; i++) {
+      for (const key in initialFormState) {
+        if (initialFormState.hasOwnProperty(key)) {
+          newFormState[`${key}${i}`] = ''; // Concatenate number with field name
+        }
+      }
+    }
+    console.log(newFormState);
+    return newFormState;
+  };
 
   // Whenever the name property changes, update the subject accordingly
   useEffect(() => {
@@ -316,45 +370,71 @@ const Home = () => {
                 <div className='column content form-container'>
 
                   <h2>Formulario De Auto-Registro (Self Check-in)</h2>
+
+
                   {!isPreviewMode ? (
-                    <form
-                      ref={formRef}
-                      id='my-form'
-                      action='https://api.staticforms.xyz/submit'
-                      method='post'
-                      onSubmit={handleSubmit}
-                    >
-                      <div className='field'>
-                        <label className='label'>Nombre completo</label>
-                        <div className='control'>
-                          <input
-                            className='input'
-                            type='text'
-                            placeholder='Maria Francisca Gomez'
-                            name='name'
-                            onChange={handleChange}
-                            maxLength='82'
-                            value={form.name}
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div className='field'>
-                        <label className='label'>Apellido completo</label>
-                        <div className='control'>
-                          <input
-                            className='input'
-                            type='text'
-                            placeholder='Garcia Jimenez del Hierro'
-                            name='$surname'
-                            value={form.$surname}
-                            onChange={handleChange}
-                            maxLength='82'
-                            required
-                          />
-                        </div>
-                      </div>
-                      {/* <div className='field'>
+
+                    <div>
+                      <label>
+                        <select value={selectedOption} onChange={handleOptionChange}>
+                          <option defaultValue="0">0</option>
+                          <option value={1}>1</option>
+                          <option value={2}>2</option>
+                          <option value={3}>3</option>
+                          <option value={4}>4</option>
+                        </select> Huesped(es)
+                      </label>
+                      <form
+                        ref={formRef}
+                        id='my-form'
+                        action='https://api.staticforms.xyz/submit'
+                        method='post'
+                        onSubmit={handleSubmit}
+                      >
+                        {sections.map((isOpen, index) => (
+                          <FormSection
+                            key={index}
+                            title={`Huesped ${index + 1}`}
+                            isOpen={isOpen}
+                            onToggle={() => handleSectionToggle(index)}
+                            onContinue={handleContinue2}
+                            sectionNumber={index + 1}
+
+                          >
+
+
+
+                            <div id={'name-' + index} className='field'>
+                              <label className='label'>Nombre completo</label>
+                              <div className='control'>
+                                <input
+                                  className='input'
+                                  type='text'
+                                  placeholder='Maria Francisca Gomez'
+                                  name={'name' + index}
+                                  onChange={handleChange}
+                                  maxLength='82'
+                                  value={form.name}
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <div className='field'>
+                              <label className='label'>Apellido completo</label>
+                              <div className='control'>
+                                <input
+                                  className='input'
+                                  type='text'
+                                  placeholder='Garcia Jimenez del Hierro'
+                                  name={'$surname' + index}
+                                  value={form.$surname}
+                                  onChange={handleChange}
+                                  maxLength='82'
+                                  required
+                                />
+                              </div>
+                            </div>
+                            {/* <div className='field'>
                   <label className='label'>Segundo apellido</label>
                   <div className='control'>
                     <input
@@ -367,7 +447,7 @@ const Home = () => {
                     />
                   </div>
                 </div> */}
-                      {/* <div className='field'>
+                            {/* <div className='field'>
                   <label className='label'>Sexo</label>
                   <div className='select'>
                     <select name="$sex" id="sex" onChange={handleChange} required>
@@ -377,128 +457,128 @@ const Home = () => {
                     </select>
                   </div>
                 </div> */}
-                      <div className='field'>
-                        <label className='label'>Sexo</label>
-                        <div className='control'>
+                            <div className='field'>
+                              <label className='label'>Sexo</label>
+                              <div className='control'>
 
-                          <label className='radio'>M&nbsp;
-                            <input
-                              className='radio'
-                              type='radio'
-                              name='$sex'
-                              value='M'
-                              onChange={handleChange}
-                              checked={form.$sex === 'M'}
-                              required
-                            />&nbsp;
+                                <label className='radio'>M&nbsp;
+                                  <input
+                                    className='radio'
+                                    type='radio'
+                                    name={'$sex' + index}
+                                    value='M'
+                                    onChange={handleChange}
+                                    // checked={form.$sex === 'M'}
+                                    required
+                                  />&nbsp;
 
-                          </label>
+                                </label>
 
 
-                          <label className='radio'>F&nbsp;
+                                <label className='radio'>F&nbsp;
 
-                            <input
-                              className='radio'
-                              type='radio'
-                              name='$sex'
-                              value='F'
-                              onChange={handleChange}
-                              checked={form.$sex === 'F'}
-                              required
-                            />&nbsp;
+                                  <input
+                                    className='radio'
+                                    type='radio'
+                                    name={'$sex' + index}
+                                    value='F'
+                                    onChange={handleChange}
+                                    // checked={form.$sex === 'F'}
+                                    required
+                                  />&nbsp;
 
-                          </label>
+                                </label>
 
-                        </div>
-                      </div>
-                      <div className='field'>
-                        <label className='label'>Nacionalidad</label>
-                        <div className='select'>
-                          <select className="form-select" id="nationality" name="$nationality" value={form.$nationality} onChange={handleChange} required>
-                            {generateCountryOptions()}
-                          </select>
-                        </div>
-                      </div>
-                      <div className='field'>
-                        <label className='label'>Tipo documento identidad</label>
-                        <div className='select'>
-                          <select name="$idtype" value={form.$idtype} id="idtype" onChange={handleChange} required>
-                            <option value="">-</option>
-                            <option value="DNI">DNI</option>
-                            <option value="Passport">Pasaporte</option>
-                            <option value="Driver's licence">Permiso de conducir</option>
-                            <option value="Nacional ID">Documento ID nacional</option>
-                            <option value="NIE">Permiso residencia español</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className='field'>
-                        <label className='label'>Numero documento de identidad</label>
-                        <div className='control'>
-                          <input
-                            className='input'
-                            type='text'
-                            placeholder='X91561553M'
-                            name='$idnum'
-                            value={form.$idnum}
-                            onChange={handleChange}
-                            maxLength='72'
-                            required
-                          />
-                        </div>
-                      </div>
+                              </div>
+                            </div>
+                            <div className='field'>
+                              <label className='label'>Nacionalidad</label>
+                              <div className='select'>
+                                <select className="form-select" id="nationality" name={"$nationality" + index} value={form["$nationality" + index]} onChange={handleChange} required>
+                                  {generateCountryOptions()}
+                                </select>
+                              </div>
+                            </div>
+                            <div className='field'>
+                              <label className='label'>Tipo documento identidad</label>
+                              <div className='select'>
+                                <select name={"$idtype" + index} value={form.$idtype} id="idtype" onChange={handleChange} required>
+                                  <option value="">-</option>
+                                  <option value="DNI">DNI</option>
+                                  <option value="Passport">Pasaporte</option>
+                                  <option value="Driver's licence">Permiso de conducir</option>
+                                  <option value="Nacional ID">Documento ID nacional</option>
+                                  <option value="NIE">Permiso residencia español</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div className='field'>
+                              <label className='label'>Numero documento de identidad</label>
+                              <div className='control'>
+                                <input
+                                  className='input'
+                                  type='text'
+                                  placeholder='X91561553M'
+                                  name={'$idnum' + index}
+                                  value={form.$idnum}
+                                  onChange={handleChange}
+                                  maxLength='72'
+                                  required
+                                />
+                              </div>
+                            </div>
 
-                      <div className='field'>
-                        <label className='label'>Fecha nacimiento</label>
-                        <div className='control'>
-                          <input
-                            className='input'
-                            type='date'
-                            placeholder='12/10/1999'
-                            name='$birthdate'
-                            value={form.$birthdate}
-                            onChange={handleChange}
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div className='field'>
-                        <label className='label'>Pais de residencia</label>
-                        <div className='select'>
-                          <select className="form-select" id="country" name="$homeCountry" value={form.$homeCountry} onChange={handleChange} required>
-                            {generateCountryOptions()}
-                          </select>
-                        </div>
-                      </div>
-                      <div className='field'>
-                        <label className='label'>Localidad de residencia</label>
-                        <div className='control'>
-                          <input
-                            className='input'
-                            type='text'
-                            placeholder='Paracuellos de Jarama'
-                            name='$homeTown'
-                            value={form.$homeTown}
-                            onChange={handleChange}
-                            maxLength='72'
-                          />
-                        </div>
-                      </div>
-                      <div className='field'>
-                        <label className='label'>Dirreccion de residencia</label>
-                        <div className='control'>
-                          <input
-                            className='input'
-                            type='text'
-                            placeholder='C. de Arturo Soria, 327-325, Cdad. Lineal, 28033 Madrid'
-                            name='$address'
-                            value={form.$address}
-                            onChange={handleChange}
-                            maxLength='72'
-                          />
-                        </div>
-                      </div>
-                      {/* <div className='field'>
+                            <div className='field'>
+                              <label className='label'>Fecha nacimiento</label>
+                              <div className='control'>
+                                <input
+                                  className='input'
+                                  type='date'
+                                  placeholder='12/10/1999'
+                                  name={'$birthdate' + index}
+                                  value={form.$birthdate}
+                                  onChange={handleChange}
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <div className='field'>
+                              <label className='label'>Pais de residencia</label>
+                              <div className='select'>
+                                <select className="form-select" id="country" name="$homeCountry" value={form.$homeCountry} onChange={handleChange} required>
+                                  {generateCountryOptions()}
+                                </select>
+                              </div>
+                            </div>
+                            <div className='field'>
+                              <label className='label'>Localidad de residencia</label>
+                              <div className='control'>
+                                <input
+                                  className='input'
+                                  type='text'
+                                  placeholder='Paracuellos de Jarama'
+                                  name={'$homeTown' + index}
+                                  value={form.$homeTown}
+                                  onChange={handleChange}
+                                  maxLength='72'
+                                />
+                              </div>
+                            </div>
+                            <div className='field'>
+                              <label className='label'>Dirreccion de residencia</label>
+                              <div className='control'>
+                                <input
+                                  className='input'
+                                  type='text'
+                                  placeholder='C. de Arturo Soria, 327-325, Cdad. Lineal, 28033 Madrid'
+                                  name={'$address' + index}
+                                  value={form.$address}
+                                  onChange={handleChange}
+                                  maxLength='72'
+                                />
+                              </div>
+                            </div>
+                            {/* <div className='field'>
                   <label className='label'>Numero de telefono fijo</label>
                   <div className='control'>
                     <input
@@ -511,10 +591,10 @@ const Home = () => {
                     />
                   </div>
                 </div> */}
-                      <div className='field'>
-                        <label className='label'>Numero de telefono movil</label>
-                        <div className='control'>
-                          {/* <input
+                            <div className='field'>
+                              <label className='label'>Numero de telefono movil</label>
+                              <div className='control'>
+                                {/* <input
                             className='input'
                             type='tel'
                             placeholder='+34123456789'
@@ -525,84 +605,84 @@ const Home = () => {
                             maxLength='82'
                             required
                           /> */}
-                          <PhoneInput
-                            className='input dropdown dropdown-trigger dropdown-menu dropdown-content dropdown-item'
-                            type='tel'
-                            placeholder="Enter phone number"
-                            pattern="^(00|\+)(?:[0-9]●?){6,14}[0-9]$"
-                            name='phone'
-                            value={form.phone}
-                            onPhoneChange={handleChange}
+                                <PhoneInput
+                                  className='input dropdown dropdown-trigger dropdown-menu dropdown-content dropdown-item'
+                                  type='tel'
+                                  placeholder="Enter phone number"
+                                  pattern="^(00|\+)(?:[0-9]●?){6,14}[0-9]$"
+                                  name={'phone' + index}
+                                  value={form.phone}
+                                  onPhoneChange={handleChange}
 
-                            maxLength='82'
-                            required
+                                  maxLength='82'
+                                  required
 
-                          // You can also pass additional props like className, etc.
-                          />
-                          <small>En formato: +34 123 456 789 o 0034 123 456 789</small>
-                        </div>
-                      </div>
-
-
-                      <div className='field'>
-                        <label className='label'>E-mail</label>
-                        <div className='control'>
-                          <input
-                            className='input'
-                            type='email'
-                            placeholder='antonio.lopez@mibuzon.com'
-                            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
-                            name='email'
-                            value={form.email}
-                            onChange={handleChange}
-                            maxLength='82'
-                            required
-                          />
-                        </div>
-                      </div>
+                                // You can also pass additional props like className, etc.
+                                />
+                                <small>En formato: +34 123 456 789 o 0034 123 456 789</small>
+                              </div>
+                            </div>
 
 
-                      <div className='field'>
-                        <label className='checkbox'>Acuerdo</label>
-                        <div className='control'>
-                          <input
-                            className='checkbox'
-                            type='checkbox'
-                            placeholder='antonio.lopez@mibuzon.com'
-                            name='$agreement'
-                            checked={form.$agreement}
-                            onChange={handleChange}
-                            required
-                          />
-                          <p /> Estoy de acurdo con Real Decreto 933/2021
-                        </div>
-                      </div>
+                            <div className='field'>
+                              <label className='label'>E-mail</label>
+                              <div className='control'>
+                                <input
+                                  className='input'
+                                  type='email'
+                                  placeholder='antonio.lopez@mibuzon.com'
+                                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                                  name={'email' + index}
+                                  value={form.email}
+                                  onChange={handleChange}
+                                  maxLength='82'
+                                  required
+                                />
+                              </div>
+                            </div>
 
-                      {/* <div className='field'>
+
+                            <div className='field'>
+                              <label className='checkbox'>Acuerdo</label>
+                              <div className='control'>
+                                <input
+                                  className='checkbox'
+                                  type='checkbox'
+                                  placeholder='antonio.lopez@mibuzon.com'
+                                  name={'$agreement' + index}
+                                  checked={form.$agreement}
+                                  onChange={handleChange}
+                                  required
+                                />
+                                <p /> Estoy de acurdo con Real Decreto 933/2021
+                              </div>
+                            </div>
+
+                            {/* <div className='field'>
                   <label className='label'>Firma</label>
                   <div className='control'>
                     <SignatureCanvas onSave={handleSave} />
                   </div>
                 </div> */}
-                      {/* <h1>Next.js Signature Field</h1> */}
+                            {/* <h1>Next.js Signature Field</h1> */}
 
-                      <div className='field' style={{ display: 'none' }}>
-                        <label className='label'>Title</label>
-                        <div className='control'>
-                          <input
-                            type='text'
-                            name='honeypot'
-                            style={{ display: 'none' }}
-                            onChange={handleChange}
-                          />
-                          <input
-                            type='hidden'
-                            name='subject'
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-                      {/* <div className='field'>
+                            <div className='field' style={{ display: 'none' }}>
+                              <label className='label'>Title</label>
+                              <div className='control'>
+                                <input
+                                  type='text'
+                                  name='honeypot'
+                                  style={{ display: 'none' }}
+                                  onChange={handleChange}
+                                />
+                                <input
+                                  type='hidden'
+                                  name='subject'
+                                  onChange={handleChange}
+                                />
+                              </div>
+                            </div>
+                            {/* <div className='field'>
                         <label className='label'>Message</label>
                         <div className='control'>
                           <textarea
@@ -616,8 +696,8 @@ const Home = () => {
                           />
                         </div>
                       </div> */}
-                      <div></div>
-                      {/* <div className='field is-grouped'>
+                            <div></div>
+                            {/* <div className='field is-grouped'>
                   <div className='control'>
                     <button className='button is-primary' >
                       Continue
@@ -628,16 +708,28 @@ const Home = () => {
 
 
 
+
+
+
+
+                          </FormSection>
+                        )
+
+                        )}
+                      </form>
                       <div className='field is-grouped'>
                         <div className='control'>
                           <button className='button is-primary' type="button" onClick={handleContinue}>Continue</button>
                         </div>
                       </div>
-                    </form>
 
-                  ) : (
+                    </div>
+
+
+
+                  ) : (sections.map((isOpen, index) => (
                     <div className="form-preview-container">
-                      <h3>Confirmar los datos</h3>
+                      <h3>Confirmar los datos {index}</h3>
                       <div className="form-preview-content">
                         <p><strong>Nombre:</strong> {form.name}</p>
                         <p><strong>Apellido:</strong> {form.$surname}</p>
@@ -652,6 +744,8 @@ const Home = () => {
                         <p><strong>Email:</strong> {form.email}</p>
                         <p><strong>Telefono:</strong> {form.phone}</p>
                       </div>
+
+
                       <div className="form-preview-buttons">
                         <div className='control'>
                           <button className="button is-primary" type="submit" onClick={handleSubmit}>Confirm</button>
@@ -660,7 +754,7 @@ const Home = () => {
                       </div>
                     </div>
 
-                  )}
+                  )))}
 
                 </div>
               </div>
