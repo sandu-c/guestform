@@ -1,0 +1,22 @@
+{
+    "name": "Your App Name",
+    "short_name": "Short Name",
+    "icons": [
+        {
+            "src": "/icons8-beach-bubbles-72.png",
+            "sizes": "72×72",
+            "type": "image/png",
+            "density": "1.5"
+        },
+        {
+            "src": "/icons8-beach-bubbles-96.png",
+            "sizes": "96×96",
+            "type": "image/png",
+            "density": "2.0"
+        }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff"
+}

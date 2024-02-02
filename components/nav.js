@@ -55,9 +55,16 @@ const Nav = () => (
         width: 300em;                            /* fixed width for the box */
         border-radius: 0.5em;                   /* applied border radius */
         border: 0.1em solid #ccc;               /* custom border style */
-        background-color: #fffde1;              /* added a background color */
+        background-color: #ffffff;              /* added a background color */
         box-shadow: 0.08em 0.05em 0.08em #ccc;  /* added a soft box shadow */
       }
+
+      @media only screen and (max-width: 768px) {
+        body {
+            background-position: right center; /* Show only the right side of the image on mobile */
+        }
+    }
+
     `}</style>
   </nav>
 )
