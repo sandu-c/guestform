@@ -1,5 +1,5 @@
 // SignatureCanvas.js
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 const SignatureCanvas = ({ onSave }) => {
   const canvasRef = useRef(null);
@@ -7,7 +7,7 @@ const SignatureCanvas = ({ onSave }) => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     ctxRef.current = ctx;
 
     let isDrawing = false;
@@ -19,7 +19,10 @@ const SignatureCanvas = ({ onSave }) => {
       canvas.focus(); // Focus on the canvas
       isDrawing = true;
       const rect = canvas.getBoundingClientRect();
-      [lastX, lastY] = [e.offsetX || e.touches[0]?.clientX || 0, e.offsetY || e.touches[0]?.clientY || 0];
+      [lastX, lastY] = [
+        e.offsetX || e.touches[0]?.clientX || 0,
+        e.offsetY || e.touches[0]?.clientY || 0,
+      ];
     };
 
     const draw = (e) => {
@@ -36,38 +39,36 @@ const SignatureCanvas = ({ onSave }) => {
       [lastX, lastY] = [offsetX, offsetY];
     };
 
-
     const stopDrawing = () => {
       isDrawing = false;
     };
 
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("touchstart", startDrawing);
 
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("touchmove", draw);
 
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("touchend", stopDrawing);
 
-    canvas.addEventListener('mouseout', stopDrawing);
-    canvas.addEventListener('touchcancel', stopDrawing);
-    canvas.addEventListener('touchleave', stopDrawing);
-
+    canvas.addEventListener("mouseout", stopDrawing);
+    canvas.addEventListener("touchcancel", stopDrawing);
+    canvas.addEventListener("touchleave", stopDrawing);
 
     return () => {
-      canvas.removeEventListener('mousedown', startDrawing);
-      canvas.removeEventListener('touchstart', startDrawing);
+      canvas.removeEventListener("mousedown", startDrawing);
+      canvas.removeEventListener("touchstart", startDrawing);
 
-      canvas.removeEventListener('mousemove', draw);
-      canvas.removeEventListener('touchmove', draw);
+      canvas.removeEventListener("mousemove", draw);
+      canvas.removeEventListener("touchmove", draw);
 
-      canvas.removeEventListener('mouseup', stopDrawing);
-      canvas.removeEventListener('touchend', stopDrawing);
+      canvas.removeEventListener("mouseup", stopDrawing);
+      canvas.removeEventListener("touchend", stopDrawing);
 
-      canvas.removeEventListener('mouseout', stopDrawing);
-      canvas.removeEventListener('touchcancel', stopDrawing);
-      canvas.removeEventListener('touchleave', stopDrawing);
+      canvas.removeEventListener("mouseout", stopDrawing);
+      canvas.removeEventListener("touchcancel", stopDrawing);
+      canvas.removeEventListener("touchleave", stopDrawing);
     };
   }, []);
 
@@ -85,13 +86,20 @@ const SignatureCanvas = ({ onSave }) => {
   };
 
   return (
-    <div className='field' >
-
-      <canvas tabIndex="0" ref={canvasRef} width={400} height={200} style={{ border: '1px solid #000' }} />
-      <button className='button' onClick={clearCanvas}>Clear Signature</button>
-      <button className='button' onClick={saveSignature}>Save Signature</button>
-
-
+    <div className="field">
+      <canvas
+        tabIndex="0"
+        ref={canvasRef}
+        width={400}
+        height={200}
+        style={{ border: "1px solid #000" }}
+      />
+      <button className="button" onClick={clearCanvas}>
+        Clear Signature
+      </button>
+      <button className="button" onClick={saveSignature}>
+        Save Signature
+      </button>
     </div>
   );
 };

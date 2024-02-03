@@ -1,27 +1,37 @@
-import { useState, useEffect, useRef } from 'react';
-import { continents, countries, languages } from 'countries-list'
-import 'bulma/css/bulma.min.css';
-import 'bulma-calendar/dist/css/bulma-calendar.min.css';
+import { useState, useEffect, useRef } from "react";
+import { continents, countries, languages } from "countries-list";
+import "bulma/css/bulma.min.css";
+import "bulma-calendar/dist/css/bulma-calendar.min.css";
 // import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 // import SignatureCanvas from '../components/SignatureCanvas';
-import FormSection from '../components/FormSection';
-import React from 'react';
+import FormSection from "../components/FormSection";
+import React from "react";
 
-import EncodingUtils from '../components/utils/encodingUtils';
+import EncodingUtils from "../components/utils/encodingUtils";
 
-
-import { useRouter } from 'next/router';
-import PdfWriter from '../components/PdfWriter';
+import { useRouter } from "next/router";
+import PdfWriter from "../components/PdfWriter";
 // import 'react-phone-number-input/style.css';
 
-import PhoneInput from '../components/PhoneInput';
-
+import { GenderRadioMolecule } from "../components/form/molecules/GenderRadioMolecule";
+import { CountrySelectionMolecule } from "../components/form/molecules/CountrySelectionMolecule";
+import { TextInputAtom } from "../components/form/atoms/TextInputAtom";
+import { IdSelectionMolecule } from "../components/form/molecules/IdSelectionMolecule";
+import { PhoneInputMolecule } from "../components/form/molecules/PhoneInputMolecule";
+import { DateInputAtom } from "../components/form/atoms/DateInputAtom";
+import { SelectionAtom } from "../components/form/atoms/SelectionAtom";
+import { AgreementCheckboxAtom } from "../components/form/atoms/AgreementCheckboxAtom";
+import { EmailInputAtom } from "../components/form/atoms/EmailInputAtom";
 
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState(0);
-  const [sections, setSections] = useState(new Array(selectedOption).fill(false));
+  const [sections, setSections] = useState(
+    new Array(selectedOption).fill(false)
+  );
   const [currentSection, setCurrentSection] = useState(0);
-  const [validSections, setValidSections] = useState(new Array(selectedOption).fill(false));
+  const [validSections, setValidSections] = useState(
+    new Array(selectedOption).fill(false)
+  );
 
   const handleOptionChange = (e) => {
     setSelectedOption(parseInt(e.target.value));
@@ -30,7 +40,6 @@ const Home = () => {
   };
 
   const handleSectionToggle = (index) => {
-
     const form = formRef.current;
     if (form.checkValidity()) {
       // setCurrentSection(index);
@@ -38,23 +47,18 @@ const Home = () => {
       // newSections[index] = !newSections[index];
       // newSections[currentSection] = true;
 
-
       const newSections = sections.map((value, idx) => {
         return idx === index ? !value : false;
       });
-
-
 
       // Toggle the selected section
       setSections(newSections);
     } else {
       form.reportValidity();
     }
-
   };
 
-
-  const handleContinue2 = () => {
+  const handleNext = () => {
     const form = formRef.current;
     if (form.checkValidity()) {
       setValidSections((prevSections) => {
@@ -87,13 +91,10 @@ const Home = () => {
       });
       form.reportValidity();
     }
-
-
-  }
-  const areAllSectionsValid = () => {
-    return validSections.every(section => section === true);
   };
-
+  const areAllSectionsValid = () => {
+    return validSections.every((section) => section === true);
+  };
 
   const formRef = useRef(null);
   const router = useRouter();
@@ -102,62 +103,60 @@ const Home = () => {
   const { d, m, p, c, x, z, fapi, ps } = router.query;
 
   // Now you can use parameter1 and parameter2 in your component
-  console.log('Parameter 1:', fapi);
+  console.log("Parameter 1:", fapi);
   // console.log('Parameter 2:', parameter2);
 
   // const [formData, setFormData] = useState({});
   const [prevFormData, setPrevFormData] = useState({});
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
-
   const [sensitive, setSensitive] = useState({
-    formApi: '',
-    $confirmationCode: 'XYZ8561',
-
+    formApi: "",
+    $confirmationCode: "XYZ8561",
   });
 
   const [buildingData, setBuildingData] = useState({
-    buildingAddress: '',
-    buildingMunicipality: '',
-    buildingProvince: '',
-    buildingPostalCode: '',
-    buildingAppartment: '',
+    buildingAddress: "",
+    buildingMunicipality: "",
+    buildingProvince: "",
+    buildingPostalCode: "",
+    buildingAppartment: "",
   });
 
   const [contractData, setContractData] = useState({
-    contract: '',
-    contractNumber: '',
-    contractDate: '',
-    checkInDate: '',
-    checkOutDate: '',
+    contract: "",
+    contractNumber: "",
+    contractDate: "",
+    checkInDate: "",
+    checkOutDate: "",
   });
 
   const [ownerData, setOwnerData] = useState({
-    name: '',
-    surname: '',
-    id: ''
+    name: "",
+    surname: "",
+    id: "",
   });
 
   const initialFormState = {
-    name: '',
-    $docu: '',
-    $surname: '',
-    $sex: '',
-    $idtype: '',
-    $idnum: '',
-    $nationality: '',
-    $birthdate: '',
-    $homeCountry: '',
-    $homeTown: '',
-    $address: '',
-    email: '',
-    phone: '',
-    $agreement: '',
-    subject: '',
-    honeypot: '',
-    message: '',
-    replyTo: '@', // this will set replyTo of email to email address entered in the form
-    accessKey: ''
+    $name: "",
+    $docu: "",
+    $surname: "",
+    $sex: "",
+    $idtype: "",
+    $idnum: "",
+    $nationality: "",
+    $birthdate: "",
+    $homeCountry: "",
+    $homeTown: "",
+    $address: "",
+    email: "",
+    $phone: "",
+    $agreement: "",
+    subject: "",
+    honeypot: "",
+    message: "",
+    replyTo: "@", // this will set replyTo of email to email address entered in the form
+    accessKey: "",
   };
 
   const [form, setForm] = useState(initialFormState);
@@ -168,7 +167,7 @@ const Home = () => {
     for (let i = 0; i <= num; i++) {
       for (const key in initialFormState) {
         if (initialFormState.hasOwnProperty(key)) {
-          newFormState[`${key}${i}`] = ''; // Concatenate number with field name
+          newFormState[`${key}${i}`] = ""; // Concatenate number with field name
         }
       }
     }
@@ -178,80 +177,54 @@ const Home = () => {
 
   // Whenever the name property changes, update the subject accordingly
   useEffect(() => {
-    setForm(prevForm => ({
+    setForm((prevForm) => ({
       ...prevForm,
-      subject: 'Booking: ' + prevForm.name + ' ' + prevForm.$surname, // Assign the value of name to subject
+      subject: "Booking: " + prevForm["$name0"] + " " + prevForm.$surname, // Assign the value of name to subject
       $docu: p,
-      accessKey: x
+      accessKey: x,
     }));
-    console.log("aaaa", form)
+    console.log("aaaa", form);
 
-    setSensitive(s => ({
+    setSensitive((s) => ({
       ...s,
-      formApi: fapi
+      formApi: fapi,
     }));
 
-    setBuildingData(buildingData => ({
+    setBuildingData((buildingData) => ({
       ...buildingData,
       buildingAddress: d,
       buildingMunicipality: m,
       buildingProvince: p,
       buildingPostalCode: c,
-      buildingAppartment: ps
+      buildingAppartment: ps,
     }));
-
-  }, [sections, form["name0"], form.$surname, form.$docu, form.accessKey, sensitive.formApi]);
+  }, [
+    sections,
+    form["$name0"],
+    form.$surname,
+    form.$docu,
+    form.accessKey,
+    sensitive.formApi,
+  ]);
 
   const [response, setResponse] = useState({
-    type: '',
-    message: ''
+    type: "",
+    message: "",
   });
 
-  const generateCountryOptions = () => {
-    // Sort country codes alphabetically
-    const sortedCountryCodes = Object.keys(countries).sort((a, b) => {
-      return countries[a].native.localeCompare(countries[b].native);
-    });
-
-    // Map over sorted country codes to generate options
-    const countryOptions = sortedCountryCodes.map((code) => (
-      <option key={code} value={code}>
-        {countries[code].native}
-      </option>
-    ));
-
-    // Add blank default option at the beginning
-    countryOptions.unshift(
-      <option key="blank" value="">
-        -
-      </option>
-    );
-
-    return countryOptions;
-
-  };
-
-  const handleSave = (dataURL) => {
-    // Handle the saved signature data (dataURL)
-    console.log('Saved Signature:', dataURL);
-  };
-
   const handleContinue = () => {
-
-
     const form = formRef.current;
 
     // console.log('Form:', form); // Check the form reference
     // console.log(form.checkValidity()); // Check if form is valid
     if (form.checkValidity() && areAllSectionsValid()) {
-
       // Form is valid, continue with the next step
       setIsPreviewMode(true);
-      console.log('Form is valid');
+      console.log("Form is valid");
     } else {
       // Form is invalid, display
       setIsPreviewMode(false);
-      console.log('Form is invalid');
+      console.log("Form is invalid");
       form.reportValidity();
     }
   };
@@ -261,112 +234,113 @@ const Home = () => {
   };
 
   const handleChange = (e) => {
-    console.log(e)
+    console.log(e);
     const { name, value } = e.target;
     let updatedValue = value;
 
+    const regex1 = new RegExp(`^$name`);
+    const regex2 = new RegExp(`^$homeTown`);
+    const regex3 = new RegExp(`^$address`);
+    const regex4 = new RegExp(`^$surname`);
 
-    if (name === 'name' || name === '$surname' || name === '$homeTown' || name === '$address') {
+    if (
+      regex1.test(name) ||
+      regex2.test(name) ||
+      regex3.test(name) ||
+      regex4.test(name)
+    ) {
       // Capitalize the first letter of each word
       updatedValue = value
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
     }
 
-    setForm({ ...form, [name]: updatedValue });
-  }
+    // setForm({ ...form, [name]: updatedValue });
+
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: updatedValue,
+    }));
+  };
 
   const handleReDownload = () => {
     const mergedObj = { ...form, ...contractData, ...buildingData };
     const jsonString = JSON.stringify(mergedObj);
-    console.log('Maravilloso ', jsonString);
+    console.log("Maravilloso ", jsonString);
     const blob = PdfWriter(mergedObj).handlePDF();
     const base64String = EncodingUtils._arrayBufferToBase64(blob);
     setForm({ ...form, $docu: base64String }); // TODO: doesn't work. How to assign string to form ?
   };
 
-  const handleGoBack = () => {
-    router.push('/');
-  };
-
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-
       handleReDownload();
 
-      const res = await fetch('https://' + sensitive.formApi + '/submit', {
-        method: 'POST',
+      const res = await fetch("https://" + sensitive.formApi + "/submit", {
+        method: "POST",
         body: JSON.stringify(form),
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
 
       const json = await res.json();
 
       if (json.success) {
         setResponse({
-          type: 'success',
-          confirmMessage1: 'Hemos recibido sus datos para el check-in',
-          confirmMessage2: 'Les recordamos que todos los huespedes mayores de 16 deberan cumplimentar este formulario online',
-          confirmMessage3: 'El dia del check in por favor traiga documentacion que acredite los datos aportados para todos los huespedes',
-          message: 'Gracias por elejir nuestro apartamento.'
+          type: "success",
+          confirmMessage1: "Hemos recibido sus datos para el check-in",
+          confirmMessage2:
+            "Les recordamos que todos los huespedes mayores de 16 deberan cumplimentar este formulario online",
+          confirmMessage3:
+            "El dia del check in por favor traiga documentacion que acredite los datos aportados para todos los huespedes",
+          message: "Gracias por elejir nuestro apartamento.",
         });
       } else {
         setResponse({
-          type: 'error',
-          message: json.message
+          type: "error",
+          message: json.message,
         });
       }
     } catch (e) {
-      console.log('An error occurred', e);
+      console.log("An error occurred", e);
       setResponse({
-        type: 'error',
-        message: 'An error occured while submitting the form'
+        type: "error",
+        message: "An error occured while submitting the form",
       });
     }
-
   };
   return (
-
-
-
-    <div className="background-container" >
-      {/* <h1>Your Next.js Page</h1>
-      <a href="/Hoja_test.pdf" download>
-        Download PDF
-      </a> */}
+    <div className="background-container">
       <div className="background-img" />
       <div className="background-overlay" />
-
-      <div className='section'>
-
-        <div className='container'>
-
-          <div className='columns'>
-            <div className='column' />
-            <div className='column  is-two-thirds'>
+      <div className="section">
+        <div className="container">
+          <div className="columns">
+            <div className="column" />
+            <div className="column  is-two-thirds">
               <div
                 className={
-                  response.type === 'success'
-                    ? 'box notification is-success '
-                    : 'is-hidden'
+                  response.type === "success"
+                    ? "box notification is-success "
+                    : "is-hidden"
                 }
               >
                 <p>{response.confirmMessage1}</p>
                 <br />
-                <p><strong>Codigo de confirmacion:</strong> {sensitive.$confirmationCode}</p>
-
+                <p>
+                  <strong>Codigo de confirmacion:</strong>{" "}
+                  {sensitive.$confirmationCode}
+                </p>
               </div>
 
               <div
                 className={
-                  response.type === 'success'
-                    ? 'box notification is-info is-multiline content is-small'
-                    : 'is-hidden'
+                  response.type === "success"
+                    ? "box notification is-info is-multiline content is-small"
+                    : "is-hidden"
                 }
               >
-
                 <em>
                   <p>{response.confirmMessage2}</p>
                   <p>{response.confirmMessage3}</p>
@@ -375,62 +349,61 @@ const Home = () => {
                 {/* <div className="form-preview-buttons">
                   <button className="button is-warning is-large" type="button" onClick={handleReDownload}>Bajar formulario de check-in</button>
                 </div> */}
-
-
               </div>
               <button
-                className={response.type === 'success'
-                  ? "notification button is-warning is-large"
-                  : 'is-hidden'
+                className={
+                  response.type === "success"
+                    ? "notification button is-warning is-large"
+                    : "is-hidden"
                 }
                 type="button"
-                onClick={handleReDownload}>
+                onClick={handleReDownload}
+              >
                 Download PDF again
               </button>
               <br />
-              <a className={response.type === 'success'
-                ? "notification button is-primary is-medium"
-                : 'is-hidden'
-              } href="/" >
+              <a
+                className={
+                  response.type === "success"
+                    ? "notification button is-primary is-medium"
+                    : "is-hidden"
+                }
+                href="/"
+              >
                 Start new
               </a>
 
-
               <div
                 className={
-                  response.type === 'error'
-                    ? 'tile box notification is-danger'
-                    : 'is-hidden'
+                  response.type === "error"
+                    ? "tile box notification is-danger"
+                    : "is-hidden"
                 }
               >
                 <p>{response.message}</p>
               </div>
               <div
-                className={response.message !== '' ? 'is-hidden' : 'columns'}
+                className={response.message !== "" ? "is-hidden" : "columns"}
               >
-                <div className='column content form-container'>
-
+                <div className="column content form-container">
                   <h2>Formulario De Auto-Registro (Self Check-in)</h2>
 
-
                   {!isPreviewMode ? (
-
                     <div>
-                      <label>
-                        <select className='select' value={selectedOption} onChange={handleOptionChange}>
-                          <option defaultValue="0">0</option>
-                          <option value={1}>1</option>
-                          <option value={2}>2</option>
-                          <option value={3}>3</option>
-                          <option value={4}>4</option>
-                        </select> Huesped(es)
-                      </label>
+                      Huesped(es)
+                      <SelectionAtom
+                        selectionList={[1, 2, 3, 4]}
+                        name="numhosts"
+                        value={selectedOption}
+                        handleChange={handleOptionChange}
+                      />
                       <form
                         ref={formRef}
-                        id='my-form'
-                        action='https://api.staticforms.xyz/submit'
-                        method='post'
+                        id="my-form"
+                        action="https://api.staticforms.xyz/submit"
+                        method="post"
                         onSubmit={handleSubmit}
+                        autoComplete="on"
                       >
                         {sections.map((isOpen, index) => (
                           <FormSection
@@ -438,411 +411,256 @@ const Home = () => {
                             title={`Huesped ${index + 1}`}
                             isOpen={isOpen}
                             onToggle={() => handleSectionToggle(index)}
-                            onContinue={handleContinue2}
+                            onContinue={handleNext}
                             sectionNumber={index + 1}
-                            
-
                           >
+                            <TextInputAtom
+                              title="Nombre completo"
+                              name={"$name" + index}
+                              value={form["$name" + index]}
+                              handleChange={handleChange}
+                              placeholder="Maria Francisca Gomez"
+                              maxLength="82"
+                              required
+                            ></TextInputAtom>
+                            <TextInputAtom
+                              title="Apellido completo"
+                              name={"$surname" + index}
+                              value={form["$surname" + index]}
+                              handleChange={handleChange}
+                              placeholder="Garcia Jimenez del Hierro"
+                              maxLength="82"
+                              required
+                            ></TextInputAtom>
 
+                            <GenderRadioMolecule
+                              name="$sex"
+                              selection={form["$sex" + index]}
+                              handleChange={handleChange}
+                              index={index}
+                            ></GenderRadioMolecule>
+                            <CountrySelectionMolecule
+                              title="Nationality"
+                              name={"$nationality" + index}
+                              value={form["$nationality" + index]}
+                              handleChange={handleChange}
+                            ></CountrySelectionMolecule>
+                            <IdSelectionMolecule
+                              title="Tipo documento identidad"
+                              name={"$idtype" + index}
+                              value={form["$idtype" + index]}
+                              handleChange={handleChange}
+                            />
 
+                            <TextInputAtom
+                              title="Numero documento de identidad"
+                              name={"$idnum" + index}
+                              value={form["$idnum" + index]}
+                              handleChange={handleChange}
+                              placeholder={"X91561553M"}
+                              maxLength="72"
+                              required
+                            ></TextInputAtom>
 
-                            <div id={'name-' + index} className='field'>
-                              <label className='label'>Nombre completo</label>
-                              <div className='control'>
+                            <DateInputAtom
+                              title="Fecha nacimiento"
+                              name={"$birthdate" + index}
+                              value={form["$birthdate" + index]}
+                              handleChange={handleChange}
+                              required
+                            />
+
+                            <CountrySelectionMolecule
+                              title="Pais de residencia"
+                              name={"$homeCountry" + index}
+                              value={form["$homeCountry" + index]}
+                              handleChange={handleChange}
+                            ></CountrySelectionMolecule>
+
+                            <TextInputAtom
+                              title="Localidad de residencia"
+                              name={"$homeTown" + index}
+                              value={form["$homeTown" + index]}
+                              handleChange={handleChange}
+                              placeholder="Paracuellos de Jarama"
+                              maxLength="72"
+                              required
+                            ></TextInputAtom>
+                            <TextInputAtom
+                              title="Dirreccion de residencia"
+                              name={"$address" + index}
+                              value={form["$address" + index]}
+                              handleChange={handleChange}
+                              placeholder="C. de Arturo Soria, 327-325, Cdad. Lineal, 28033 Madrid"
+                              maxLength="72"
+                              required
+                            ></TextInputAtom>
+
+                            <PhoneInputMolecule
+                              title="Numero de telefono movil"
+                              name={"$phone" + index}
+                              value={form["$phone" + index]}
+                              handleChange={handleChange}
+                              required
+                            ></PhoneInputMolecule>
+
+                            <EmailInputAtom
+                              title="E-mail"
+                              name={"$email" + index}
+                              value={form["$email" + index]}
+                              handleChange={handleChange}
+                              index={index}
+                            ></EmailInputAtom>
+
+                            <AgreementCheckboxAtom
+                              title="Agreement"
+                              name={"$agreement" + index}
+                              value={form["$agreement" + index]}
+                              handleChange={handleChange}
+                              index={index}
+                            ></AgreementCheckboxAtom>
+
+                            <div className="field" style={{ display: "none" }}>
+                              <label className="label">Title</label>
+                              <div className="control">
                                 <input
-                                  className='input'
-                                  type='text'
-                                  placeholder='Maria Francisca Gomez'
-                                  name={'name' + index}
-                                  onChange={handleChange}
-                                  maxLength='82'
-                                  value={form['name' + index]}
-                                  required
-                                />
-                              </div>
-                            </div>
-                            <div className='field'>
-                              <label className='label'>Apellido completo</label>
-                              <div className='control'>
-                                <input
-                                  className='input'
-                                  type='text'
-                                  placeholder='Garcia Jimenez del Hierro'
-                                  name={'$surname' + index}
-                                  value={form['$surname' + index]}
-                                  onChange={handleChange}
-                                  maxLength='82'
-                                  required
-                                />
-                              </div>
-                            </div>
-                            {/* <div className='field'>
-                  <label className='label'>Segundo apellido</label>
-                  <div className='control'>
-                    <input
-                      className='input'
-                      type='text'
-                      placeholder='Rodriguez'
-                      name='surname2'
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                </div> */}
-                            {/* <div className='field'>
-                  <label className='label'>Sexo</label>
-                  <div className='select'>
-                    <select name="$sex" id="sex" onChange={handleChange} required>
-                      <option value="">-</option>
-                      <option value="Hombre">Hombre</option>
-                      <option value="Mujer">Mujer</option>
-                    </select>
-                  </div>
-                </div> */}
-                            <div className='field'>
-                              <label className='label'>Sexo</label>
-                              <div className='control'>
-
-                                <label className='radio'>M&nbsp;
-                                  <input
-                                    className='radio'
-                                    type='radio'
-                                    name={'$sex' + index}
-                                    value='M'
-                                    onChange={handleChange}
-                                    // checked={form.$sex === 'M'}
-                                    required
-                                  />&nbsp;
-
-                                </label>
-
-                                <label className='radio'>F&nbsp;
-
-                                  <input
-                                    className='radio'
-                                    type='radio'
-                                    name={'$sex' + index}
-                                    value='F'
-                                    onChange={handleChange}
-                                    // checked={form.$sex === 'F'}
-                                    required
-                                  />&nbsp;
-
-                                </label>
-
-                              </div>
-                            </div>
-                            <div className='field'>
-                              <label className='label'>Nacionalidad</label>
-                              <div className='select'>
-                                <select className="form-select" id="nationality" name={"$nationality" + index} value={form["$nationality" + index]} onChange={handleChange} required>
-                                  {generateCountryOptions()}
-                                </select>
-                              </div>
-                            </div>
-                            <div className='field'>
-                              <label className='label'>Tipo documento identidad</label>
-                              <div className='select'>
-                                <select name={"$idtype" + index} value={form["$idtype" + index]} id="idtype" onChange={handleChange} required>
-                                  <option value="">-</option>
-                                  <option value="DNI">DNI</option>
-                                  <option value="Passport">Pasaporte</option>
-                                  <option value="Driver's licence">Permiso de conducir</option>
-                                  <option value="Nacional ID">Documento ID nacional</option>
-                                  <option value="NIE">Permiso residencia español</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div className='field'>
-                              <label className='label'>Numero documento de identidad</label>
-                              <div className='control'>
-                                <input
-                                  className='input'
-                                  type='text'
-                                  placeholder='X91561553M'
-                                  name={'$idnum' + index}
-                                  value={form['$idnum' + index]}
-                                  onChange={handleChange}
-                                  maxLength='72'
-                                  required
-                                />
-                              </div>
-                            </div>
-
-                            <div className='field'>
-                              <label className='label'>Fecha nacimiento</label>
-                              <div className='control'>
-                                <input
-                                  className='input'
-                                  type='date'
-                                  placeholder='12/10/1999'
-                                  name={'$birthdate' + index}
-                                  value={form['$birthdate' + index]}
-                                  onChange={handleChange}
-                                  required
-                                />
-                              </div>
-                            </div>
-                            <div className='field'>
-                              <label className='label'>Pais de residencia</label>
-                              <div className='select'>
-                                <select className="form-select" id="country" name={"$homeCountry" + index} value={form["$homeCountry" + index]} onChange={handleChange} required>
-                                  {generateCountryOptions()}
-                                </select>
-                              </div>
-                            </div>
-                            <div className='field'>
-                              <label className='label'>Localidad de residencia</label>
-                              <div className='control'>
-                                <input
-                                  className='input'
-                                  type='text'
-                                  placeholder='Paracuellos de Jarama'
-                                  name={'$homeTown' + index}
-                                  value={form['$homeTown' + index]}
-                                  onChange={handleChange}
-                                  maxLength='72'
-                                />
-                              </div>
-                            </div>
-                            <div className='field'>
-                              <label className='label'>Dirreccion de residencia</label>
-                              <div className='control'>
-                                <input
-                                  className='input'
-                                  type='text'
-                                  placeholder='C. de Arturo Soria, 327-325, Cdad. Lineal, 28033 Madrid'
-                                  name={'$address' + index}
-                                  value={form['$address' + index]}
-                                  onChange={handleChange}
-                                  maxLength='72'
-                                />
-                              </div>
-                            </div>
-                            {/* <div className='field'>
-                  <label className='label'>Numero de telefono fijo</label>
-                  <div className='control'>
-                    <input
-                      className='input'
-                      type='tel'
-                      placeholder='+34123456789'
-                      pattern="^\+(?:[0-9]●?){6,14}[0-9]$"
-                      name='telf'
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div> */}
-                            <div className='field'>
-                              <label className='label'>Numero de telefono movil</label>
-                              <div className='control'>
-                                {/* <input
-                            className='input'
-                            type='tel'
-                            placeholder='+34123456789'
-                            pattern="^(00|\+)(?:[0-9]●?){6,14}[0-9]$"
-                            name='phone'
-                            value={form.phone}
-                            onChange={handleChange}
-                            maxLength='82'
-                            required
-                          /> */}
-                                <PhoneInput
-                                  className='input dropdown dropdown-trigger dropdown-menu dropdown-content dropdown-item'
-                                  type='tel'
-                                  placeholder="Enter phone number"
-                                  pattern="^(00|\+)(?:[0-9]●?){6,14}[0-9]$"
-                                  name={'phone' + index}
-                                  value={form['phone' + index]}
-                                  onPhoneChange={handleChange}
-
-                                  maxLength='82'
-                                  required
-
-                                // You can also pass additional props like className, etc.
-                                />
-                                <small>En formato: +34 123 456 789 o 0034 123 456 789</small>
-                              </div>
-                            </div>
-
-
-                            <div className='field'>
-                              <label className='label'>E-mail</label>
-                              <div className='control'>
-                                <input
-                                  className='input'
-                                  type='email'
-                                  placeholder='antonio.lopez@mibuzon.com'
-                                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
-                                  name={'email' + index}
-                                  value={form['email' + index]}
-                                  onChange={handleChange}
-                                  maxLength='82'
-                                  required
-                                />
-                              </div>
-                            </div>
-
-
-                            <div className='field'>
-                              <label className='checkbox'>Acuerdo</label>
-                              <div className='control'>
-                                <input
-                                  className='checkbox'
-                                  type='checkbox'
-                                  placeholder='antonio.lopez@mibuzon.com'
-                                  name={'$agreement' + index}
-                                  checked={form['$agreement' + index]}
-                                  onChange={handleChange}
-                                  required
-                                />
-                                <p /> Estoy de acurdo con Real Decreto 933/2021
-                              </div>
-                            </div>
-
-                            {/* <div className='field'>
-                  <label className='label'>Firma</label>
-                  <div className='control'>
-                    <SignatureCanvas onSave={handleSave} />
-                  </div>
-                </div> */}
-                            {/* <h1>Next.js Signature Field</h1> */}
-
-                            <div className='field' style={{ display: 'none' }}>
-                              <label className='label'>Title</label>
-                              <div className='control'>
-                                <input
-                                  type='text'
-                                  name='honeypot'
-                                  style={{ display: 'none' }}
+                                  type="text"
+                                  name="honeypot"
+                                  style={{ display: "none" }}
                                   onChange={handleChange}
                                 />
                                 <input
-                                  type='hidden'
-                                  name='subject'
+                                  type="hidden"
+                                  name="subject"
                                   onChange={handleChange}
                                 />
                               </div>
                             </div>
-                            {/* <div className='field'>
-                        <label className='label'>Message</label>
-                        <div className='control'>
-                          <textarea
-                            className='textarea'
-                            placeholder='Your Message'
-                            name='message'
-                            type='hidden'
-                            value='asdasd'
-                            onChange={handleChange}
-                            required
-                          />
-                        </div>
-                      </div> */}
+
                             <div></div>
-                            {/* <div className='field is-grouped'>
-                  <div className='control'>
-                    <button className='button is-primary' >
-                      Continue
-                    </button>
-                  </div>
-                </div> */}
-
-
-
-
-
-
-
-
                           </FormSection>
-                        )
-
-                        )}
+                        ))}
                       </form>
-
-
-                      <div className='field is-grouped'>
-                        <div className='control'>
-                          <button className='button is-primary' type="button" onClick={handleContinue}>Continue</button>
+                      <div className="field is-grouped">
+                        <div className="control">
+                          <button
+                            className="button is-primary"
+                            type="button"
+                            onClick={handleContinue}
+                          >
+                            Continue
+                          </button>
                         </div>
                       </div>
-
                     </div>
-
-
-
-                  ) : (sections.map((isOpen, index) => (
-                    <div className="form-preview-container">
-                      <h3>Confirmar los datos {index + 1}</h3>
-                      <div className="form-preview-content">
-                        <p><strong>Nombre:</strong> {form["name" + index]}</p>
-                        <p><strong>Apellido:</strong> {form["$surname" + index]}</p>
-                        <p><strong>Genero:</strong> {form["$sex" + index]}</p>
-                        <p><strong>Tipo documento de identidad:</strong> {form["$idtype" + index]}</p>
-                        <p><strong>Numero documento identidad:</strong> {form["$idnum" + index]}</p>
-                        <p><strong>Nacionalidad:</strong> {form["$nationality" + index]}</p>
-                        <p><strong>Fecha de nacimiento:</strong> {form["$birthdate" + index]}</p>
-                        <p><strong>Pais de residencia:</strong> {form["$homeCountry" + index]}</p>
-                        <p><strong>Ciudad de residencia:</strong> {form["$homeTown" + index]}</p>
-                        <p><strong>Dirreccion de residencia:</strong> {form["$address" + index]}</p>
-                        <p><strong>Email:</strong> {form["email" + index]}</p>
-                        <p><strong>Telefono:</strong> {form["phone" + index]}</p>
+                  ) : (
+                    sections.map((isOpen, index) => (
+                      <div className="form-preview-container">
+                        <h3>Confirmar los datos {index + 1}</h3>
+                        <div className="form-preview-content">
+                          <p>
+                            <strong>Nombre:</strong> {form["$name" + index]}
+                          </p>
+                          <p>
+                            <strong>Apellido:</strong>{" "}
+                            {form["$surname" + index]}
+                          </p>
+                          <p>
+                            <strong>Genero:</strong> {form["$sex" + index]}
+                          </p>
+                          <p>
+                            <strong>Tipo documento de identidad:</strong>{" "}
+                            {form["$idtype" + index]}
+                          </p>
+                          <p>
+                            <strong>Numero documento identidad:</strong>{" "}
+                            {form["$idnum" + index]}
+                          </p>
+                          <p>
+                            <strong>Nacionalidad:</strong>{" "}
+                            {form["$nationality" + index]}
+                          </p>
+                          <p>
+                            <strong>Fecha de nacimiento:</strong>{" "}
+                            {form["$birthdate" + index]}
+                          </p>
+                          <p>
+                            <strong>Pais de residencia:</strong>{" "}
+                            {form["$homeCountry" + index]}
+                          </p>
+                          <p>
+                            <strong>Ciudad de residencia:</strong>{" "}
+                            {form["$homeTown" + index]}
+                          </p>
+                          <p>
+                            <strong>Dirreccion de residencia:</strong>{" "}
+                            {form["$address" + index]}
+                          </p>
+                          <p>
+                            <strong>Email:</strong> {form["$email" + index]}
+                          </p>
+                          <p>
+                            <strong>Telefono:</strong> {form["$phone" + index]}
+                          </p>
+                        </div>
                       </div>
-
-
-
-                    </div>
-
-                  ))
-
-
-
+                    ))
                   )}
                   {isPreviewMode ? (
                     <div className="form-preview-buttons">
-                      <div className='control'>
-                        <button className="button is-primary" type="submit" onClick={handleSubmit}>Confirm</button>
-                        <button className="button" type="button" onClick={handleEdit}>Edit</button>
+                      <div className="control">
+                        <button
+                          className="button is-primary"
+                          type="submit"
+                          onClick={handleSubmit}
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          className="button"
+                          type="button"
+                          onClick={handleEdit}
+                        >
+                          Edit
+                        </button>
                       </div>
                     </div>
-                  ) : (<div />)
-
-
-                  }
-
+                  ) : (
+                    <div />
+                  )}
                 </div>
               </div>
             </div>
-            <div className='column' />
+            <div className="column" />
           </div>
         </div>
       </div>
 
       <style jsx>{`
+        .notification {
+          z-index: 4;
+        }
 
-      .notification {
-        z-index: 4;
-      }
+        .form-preview-container {
+          padding: 20px;
+          border: 1px solid #ccc; /* Add a 1px solid border */
+          border-radius: 25px; /* Add some border radius for rounded corners */
+          background-color: rgba(205, 215, 205, 0.4);
+        }
 
-.form-preview-container {
-  padding: 20px;
-  border: 1px solid #ccc; /* Add a 1px solid border */
-  border-radius: 25px; /* Add some border radius for rounded corners */
-  background-color: rgba(205, 215, 205, 0.4);
-}
+        .form-preview-buttons {
+          margin-top: 20px;
+          display: flex;
+          justify-content: space-between; /* Add space between buttons */
+        }
 
-.form-preview-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between; /* Add space between buttons */
-}
-
-.form-preview-buttons button {
-  flex: 1; /* Each button takes equal space */
-  margin-right: 10px; /* Add right margin between buttons */
-}
-.form-preview-buttons button:last-child {
-  margin-right: 0; /* Remove margin from the last button */
-}
+        .form-preview-buttons button {
+          flex: 1; /* Each button takes equal space */
+          margin-right: 10px; /* Add right margin between buttons */
+        }
+        .form-preview-buttons button:last-child {
+          margin-right: 0; /* Remove margin from the last button */
+        }
 
         @media only screen and (max-width: 768px) {
           .background-container {
@@ -850,7 +668,7 @@ const Home = () => {
           }
         }
 
-        .background-container{
+        .background-container {
           background-size: cover;
           background-repeat: no-repeat;
           background-attachment: fixed;
@@ -875,7 +693,7 @@ const Home = () => {
         }
 
         .background-img {
-          background-image: url('/img/pool.jpg');
+          background-image: url("/img/pool.jpg");
           background-size: cover;
           background-repeat: no-repeat;
           background-attachment: fixed;
@@ -887,7 +705,7 @@ const Home = () => {
           height: 100vh;
           margin: 0;
           padding: 0;
-          
+
           z-index: 1; /* Ensure the overlay is behind the form */
         }
 
@@ -903,9 +721,6 @@ const Home = () => {
         }
       `}</style>
     </div>
-
-
-
   );
 };
 
