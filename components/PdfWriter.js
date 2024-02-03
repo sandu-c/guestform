@@ -70,18 +70,18 @@ const PdfWriter = (contact) => {
     const yName = 564
     const yDiff = 18
     // Specify the position to add text on the page
-    writeOnPDF(contact.name, xLongFields, yName);
-    writeOnPDF(contact.$surname, xLongFields, yName -= yDiff);
-    writeOnPDF(contact.$sex, xLongFields, yName -= yDiff);
-    writeOnPDF(contact.$idtype, xShortFields, yName -= yDiff);
-    writeOnPDF(contact.$idnum, xShortFields, yName -= yDiff);
-    writeOnPDF(contact.$nationality, xLongFields, yName -= yDiff);
-    writeOnPDF(contact.$birthdate, xLongFields, yName -= yDiff);
-    writeOnPDF(contact.$address, xShortFields, yName -= yDiff);
-    writeOnPDF(contact.$homeTown, xShortFields, yName -= yDiff);
-    writeOnPDF(contact.$homeCountry, xShortFields, yName -= yDiff);
-    writeOnPDF(contact.phone, xLongFields, yName -= yDiff * 2);
-    writeOnPDF(contact.email, xLongFields, yName -= yDiff);
+    writeOnPDF(contact.name0, xLongFields, yName);
+    writeOnPDF(contact.$surname0, xLongFields, yName -= yDiff);
+    writeOnPDF(contact.$sex0, xLongFields, yName -= yDiff);
+    writeOnPDF(contact.$idtype0, xShortFields, yName -= yDiff);
+    writeOnPDF(contact.$idnum0, xShortFields, yName -= yDiff);
+    writeOnPDF(contact.$nationality0, xLongFields, yName -= yDiff);
+    writeOnPDF(contact.$birthdate0, xLongFields, yName -= yDiff);
+    writeOnPDF(contact.$address0, xShortFields, yName -= yDiff);
+    writeOnPDF(contact.$homeTown0, xShortFields, yName -= yDiff);
+    writeOnPDF(contact.$homeCountry0, xShortFields, yName -= yDiff);
+    writeOnPDF(contact.phone0, xLongFields, yName -= yDiff * 2);
+    writeOnPDF(contact.email0, xLongFields, yName -= yDiff);
 
 
     // Save or download the filled PDF

@@ -18,9 +18,10 @@ import PhoneInput from '../components/PhoneInput';
 
 
 const Home = () => {
-  const [selectedOption, setSelectedOption] = useState(1);
+  const [selectedOption, setSelectedOption] = useState(0);
   const [sections, setSections] = useState(new Array(selectedOption).fill(false));
   const [currentSection, setCurrentSection] = useState(0);
+  const [validSections, setValidSections] = useState(new Array(selectedOption).fill(false));
 
   const handleOptionChange = (e) => {
     setSelectedOption(parseInt(e.target.value));
@@ -29,33 +30,70 @@ const Home = () => {
   };
 
   const handleSectionToggle = (index) => {
-    setCurrentSection(index);
-    const newSections = [...sections];
-    newSections[index] = !newSections[index];
-    newSections[currentSection] = true;
 
-    setSections(newSections);
+    const form = formRef.current;
+    if (form.checkValidity()) {
+      // setCurrentSection(index);
+      // const newSections = [...sections];
+      // newSections[index] = !newSections[index];
+      // newSections[currentSection] = true;
+
+
+      const newSections = sections.map((value, idx) => {
+        return idx === index ? !value : false;
+      });
+
+
+
+      // Toggle the selected section
+      setSections(newSections);
+    } else {
+      form.reportValidity();
+    }
+
   };
 
 
   const handleContinue2 = () => {
-    const nextSection = currentSection + 1;
-    if (nextSection < sections.length) {
-      setSections((prevSections) => {
+    const form = formRef.current;
+    if (form.checkValidity()) {
+      setValidSections((prevSections) => {
+        const newSections = [...prevSections];
+        newSections[currentSection] = true;
+        return newSections;
+      });
+
+      const nextSection = currentSection + 1;
+      if (nextSection < sections.length) {
+        setSections((prevSections) => {
+          const newSections = [...prevSections];
+          newSections[currentSection] = false;
+          newSections[nextSection] = true;
+          return newSections;
+        });
+        setCurrentSection(nextSection);
+      } else if (currentSection === sections.length - 1) {
+        setSections((prevSections) => {
+          const newSections = [...prevSections];
+          newSections[currentSection] = false; // Collapse the last section
+          return newSections;
+        });
+      }
+    } else {
+      setValidSections((prevSections) => {
         const newSections = [...prevSections];
         newSections[currentSection] = false;
-        newSections[nextSection] = true;
         return newSections;
       });
-      setCurrentSection(nextSection);
-    } else if (currentSection === sections.length - 1) {
-      setSections((prevSections) => {
-        const newSections = [...prevSections];
-        newSections[currentSection] = false; // Collapse the last section
-        return newSections;
-      });
+      form.reportValidity();
     }
+
+
   }
+  const areAllSectionsValid = () => {
+    return validSections.every(section => section === true);
+  };
+
 
   const formRef = useRef(null);
   const router = useRouter();
@@ -146,6 +184,7 @@ const Home = () => {
       $docu: p,
       accessKey: x
     }));
+    console.log("aaaa", form)
 
     setSensitive(s => ({
       ...s,
@@ -161,8 +200,7 @@ const Home = () => {
       buildingAppartment: ps
     }));
 
-
-  }, [form.name, form.$surname, form.$docu, form.accessKey, sensitive.formApi]);
+  }, [sections, form["name0"], form.$surname, form.$docu, form.accessKey, sensitive.formApi]);
 
   const [response, setResponse] = useState({
     type: '',
@@ -200,10 +238,13 @@ const Home = () => {
 
   const handleContinue = () => {
 
+
     const form = formRef.current;
-    console.log('Form:', form); // Check the form reference
-    console.log(form.checkValidity()); // Check if form is valid
-    if (form.checkValidity()) {
+
+    // console.log('Form:', form); // Check the form reference
+    // console.log(form.checkValidity()); // Check if form is valid
+    if (form.checkValidity() && areAllSectionsValid()) {
+
       // Form is valid, continue with the next step
       setIsPreviewMode(true);
       console.log('Form is valid');
@@ -211,7 +252,7 @@ const Home = () => {
       // Form is invalid, display
       setIsPreviewMode(false);
       console.log('Form is invalid');
-      form.reportValidity()
+      form.reportValidity();
     }
   };
 
@@ -219,7 +260,7 @@ const Home = () => {
     setIsPreviewMode(false);
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     console.log(e)
     const { name, value } = e.target;
     let updatedValue = value;
@@ -376,7 +417,7 @@ const Home = () => {
 
                     <div>
                       <label>
-                        <select value={selectedOption} onChange={handleOptionChange}>
+                        <select className='select' value={selectedOption} onChange={handleOptionChange}>
                           <option defaultValue="0">0</option>
                           <option value={1}>1</option>
                           <option value={2}>2</option>
@@ -399,6 +440,7 @@ const Home = () => {
                             onToggle={() => handleSectionToggle(index)}
                             onContinue={handleContinue2}
                             sectionNumber={index + 1}
+                            
 
                           >
 
@@ -414,7 +456,7 @@ const Home = () => {
                                   name={'name' + index}
                                   onChange={handleChange}
                                   maxLength='82'
-                                  value={form.name}
+                                  value={form['name' + index]}
                                   required
                                 />
                               </div>
@@ -427,7 +469,7 @@ const Home = () => {
                                   type='text'
                                   placeholder='Garcia Jimenez del Hierro'
                                   name={'$surname' + index}
-                                  value={form.$surname}
+                                  value={form['$surname' + index]}
                                   onChange={handleChange}
                                   maxLength='82'
                                   required
@@ -474,7 +516,6 @@ const Home = () => {
 
                                 </label>
 
-
                                 <label className='radio'>F&nbsp;
 
                                   <input
@@ -502,7 +543,7 @@ const Home = () => {
                             <div className='field'>
                               <label className='label'>Tipo documento identidad</label>
                               <div className='select'>
-                                <select name={"$idtype" + index} value={form.$idtype} id="idtype" onChange={handleChange} required>
+                                <select name={"$idtype" + index} value={form["$idtype" + index]} id="idtype" onChange={handleChange} required>
                                   <option value="">-</option>
                                   <option value="DNI">DNI</option>
                                   <option value="Passport">Pasaporte</option>
@@ -520,7 +561,7 @@ const Home = () => {
                                   type='text'
                                   placeholder='X91561553M'
                                   name={'$idnum' + index}
-                                  value={form.$idnum}
+                                  value={form['$idnum' + index]}
                                   onChange={handleChange}
                                   maxLength='72'
                                   required
@@ -536,7 +577,7 @@ const Home = () => {
                                   type='date'
                                   placeholder='12/10/1999'
                                   name={'$birthdate' + index}
-                                  value={form.$birthdate}
+                                  value={form['$birthdate' + index]}
                                   onChange={handleChange}
                                   required
                                 />
@@ -545,7 +586,7 @@ const Home = () => {
                             <div className='field'>
                               <label className='label'>Pais de residencia</label>
                               <div className='select'>
-                                <select className="form-select" id="country" name="$homeCountry" value={form.$homeCountry} onChange={handleChange} required>
+                                <select className="form-select" id="country" name={"$homeCountry" + index} value={form["$homeCountry" + index]} onChange={handleChange} required>
                                   {generateCountryOptions()}
                                 </select>
                               </div>
@@ -558,7 +599,7 @@ const Home = () => {
                                   type='text'
                                   placeholder='Paracuellos de Jarama'
                                   name={'$homeTown' + index}
-                                  value={form.$homeTown}
+                                  value={form['$homeTown' + index]}
                                   onChange={handleChange}
                                   maxLength='72'
                                 />
@@ -572,7 +613,7 @@ const Home = () => {
                                   type='text'
                                   placeholder='C. de Arturo Soria, 327-325, Cdad. Lineal, 28033 Madrid'
                                   name={'$address' + index}
-                                  value={form.$address}
+                                  value={form['$address' + index]}
                                   onChange={handleChange}
                                   maxLength='72'
                                 />
@@ -611,7 +652,7 @@ const Home = () => {
                                   placeholder="Enter phone number"
                                   pattern="^(00|\+)(?:[0-9]●?){6,14}[0-9]$"
                                   name={'phone' + index}
-                                  value={form.phone}
+                                  value={form['phone' + index]}
                                   onPhoneChange={handleChange}
 
                                   maxLength='82'
@@ -633,7 +674,7 @@ const Home = () => {
                                   placeholder='antonio.lopez@mibuzon.com'
                                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                                   name={'email' + index}
-                                  value={form.email}
+                                  value={form['email' + index]}
                                   onChange={handleChange}
                                   maxLength='82'
                                   required
@@ -650,7 +691,7 @@ const Home = () => {
                                   type='checkbox'
                                   placeholder='antonio.lopez@mibuzon.com'
                                   name={'$agreement' + index}
-                                  checked={form.$agreement}
+                                  checked={form['$agreement' + index]}
                                   onChange={handleChange}
                                   required
                                 />
@@ -717,6 +758,8 @@ const Home = () => {
 
                         )}
                       </form>
+
+
                       <div className='field is-grouped'>
                         <div className='control'>
                           <button className='button is-primary' type="button" onClick={handleContinue}>Continue</button>
@@ -729,32 +772,42 @@ const Home = () => {
 
                   ) : (sections.map((isOpen, index) => (
                     <div className="form-preview-container">
-                      <h3>Confirmar los datos {index}</h3>
+                      <h3>Confirmar los datos {index + 1}</h3>
                       <div className="form-preview-content">
-                        <p><strong>Nombre:</strong> {form.name}</p>
-                        <p><strong>Apellido:</strong> {form.$surname}</p>
-                        <p><strong>Genero:</strong> {form.$sex}</p>
-                        <p><strong>Tipo documento de identidad:</strong> {form.$idtype}</p>
-                        <p><strong>Numero documento identidad:</strong> {form.$idnum}</p>
-                        <p><strong>Nacionalidad:</strong> {form.$nationality}</p>
-                        <p><strong>Fecha de nacimiento:</strong> {form.$birthdate}</p>
-                        <p><strong>Pais de residencia:</strong> {form.$homeCountry}</p>
-                        <p><strong>Ciudad de residencia:</strong> {form.$homeTown}</p>
-                        <p><strong>Dirreccion de residencia:</strong> {form.$address}</p>
-                        <p><strong>Email:</strong> {form.email}</p>
-                        <p><strong>Telefono:</strong> {form.phone}</p>
+                        <p><strong>Nombre:</strong> {form["name" + index]}</p>
+                        <p><strong>Apellido:</strong> {form["$surname" + index]}</p>
+                        <p><strong>Genero:</strong> {form["$sex" + index]}</p>
+                        <p><strong>Tipo documento de identidad:</strong> {form["$idtype" + index]}</p>
+                        <p><strong>Numero documento identidad:</strong> {form["$idnum" + index]}</p>
+                        <p><strong>Nacionalidad:</strong> {form["$nationality" + index]}</p>
+                        <p><strong>Fecha de nacimiento:</strong> {form["$birthdate" + index]}</p>
+                        <p><strong>Pais de residencia:</strong> {form["$homeCountry" + index]}</p>
+                        <p><strong>Ciudad de residencia:</strong> {form["$homeTown" + index]}</p>
+                        <p><strong>Dirreccion de residencia:</strong> {form["$address" + index]}</p>
+                        <p><strong>Email:</strong> {form["email" + index]}</p>
+                        <p><strong>Telefono:</strong> {form["phone" + index]}</p>
                       </div>
 
 
-                      <div className="form-preview-buttons">
-                        <div className='control'>
-                          <button className="button is-primary" type="submit" onClick={handleSubmit}>Confirm</button>
-                          <button className="button" type="button" onClick={handleEdit}>Edit</button>
-                        </div>
-                      </div>
+
                     </div>
 
-                  )))}
+                  ))
+
+
+
+                  )}
+                  {isPreviewMode ? (
+                    <div className="form-preview-buttons">
+                      <div className='control'>
+                        <button className="button is-primary" type="submit" onClick={handleSubmit}>Confirm</button>
+                        <button className="button" type="button" onClick={handleEdit}>Edit</button>
+                      </div>
+                    </div>
+                  ) : (<div />)
+
+
+                  }
 
                 </div>
               </div>
