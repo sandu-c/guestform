@@ -26,13 +26,13 @@ module.exports = {
   assetPrefix: assetPrefix,
   basePath: basePath,
   // Serve static files directly
-  async rewrites() {
-    return [
-      {
-        source: "/:path*",
-        destination: "/:path*",
-      },
-    ];
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: "/:path*",
+  //       destination: "/:path*",
+  //     },
+  //   ];
+  // },
   output: 'export'
 };
