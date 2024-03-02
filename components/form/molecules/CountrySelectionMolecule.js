@@ -12,12 +12,12 @@ export function CountrySelectionMolecule({ title, name, value, handleChange }) {
 
   // Sort the country array by native country names
   const sortedCountries = countryArray.sort((a, b) => {
-    return a.nativeName.localeCompare(b.nativeName);
+    return a.name.localeCompare(b.name);
   });
 
   // Extract an array of sorted native country names
   const sortedCountryNames = sortedCountries.map(
-    (country) => country.nativeName
+    (country) => country.name
   );
 
   return (

@@ -79,7 +79,7 @@ const PdfWriter = (contact) => {
 
     // Save or download the filled PDF
     const pdfBytes = await pdfDoc.save();
-    const base64String = EncodingUtils._arrayBufferToBase64(pdfBytes);
+    const base64String = await EncodingUtils._arrayBufferToBase64(pdfBytes);
     console.log("Astonishing: ", base64String);
     const blob = new Blob([EncodingUtils._base64ToArrayBuffer(base64String)], {
       type: "application/pdf",

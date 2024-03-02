@@ -1,12 +1,13 @@
 import { useState } from "react";
 
 const FormSection = ({
-  sectionNumber,
-  title,
+  
   children,
+  title,
   isOpen,
   onToggle,
   onContinue,
+  sectionNumber
 }) => {
   const sectionStyle = {
     border: "1px solid #ccc",

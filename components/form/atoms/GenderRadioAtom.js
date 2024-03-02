@@ -2,7 +2,6 @@ import React from "react";
 
 export function GenderRadioAtom({
   name,
-  index,
   handleChange,
   selection,
   value,
@@ -13,7 +12,7 @@ export function GenderRadioAtom({
       <input
         className="radio"
         type="radio"
-        name={name + index}
+        name={name}
         value={value}
         onChange={handleChange}
         checked={selection === value}
