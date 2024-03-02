@@ -6,7 +6,7 @@
 //     },
 //   };
 
-const repo = "";
+const repo = "guestform";
 const isGithubActions = process.env.GITHUB_ACTIONS || false;
 
 let assetPrefix = "";
