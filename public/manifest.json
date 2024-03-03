@@ -13,6 +13,10 @@
             "sizes": "96×96",
             "type": "image/png",
             "density": "2.0"
+        },
+        {
+            "src": "/img/pool.jpg",
+            "type": "image/jpg"
         }
     ],
     "start_url": "/",
