@@ -3,19 +3,19 @@
     "short_name": "Short Name",
     "icons": [
         {
-            "src": "/img/icons8-beach-bubbles-72.png",
+            "src": "./img/icons8-beach-bubbles-72.png",
             "sizes": "72×72",
             "type": "image/png",
             "density": "1.5"
         },
         {
-            "src": "/img/icons8-beach-bubbles-96.png",
+            "src": "./img/icons8-beach-bubbles-96.png",
             "sizes": "96×96",
             "type": "image/png",
             "density": "2.0"
         },
         {
-            "src": "/img/pool.jpg",
+            "src": "./img/pool.jpg",
             "sizes":"1280x960",
             "type": "image/jpg",
             "density":"2.0"

@@ -4,7 +4,7 @@ import EncodingUtils from "./utils/encodingUtils";
 const PdfWriter = (contact) => {
   const handlePDF = async () => {
     // Load your template PDF
-    const templatePdfUrl = "/template_es.pdf";
+    const templatePdfUrl = "./template_es.pdf";
     const templatePdfBytes = await fetch(templatePdfUrl).then((res) =>
       res.arrayBuffer()
     );
