@@ -10,7 +10,7 @@ const repo = "guestform";
 const isGithubActions = process.env.GITHUB_ACTIONS || false;
 
 let assetPrefix = "/guestform/";
-let basePath = "";
+let basePath = "/guestform/";
 
 // if (isGithubActions) {
 //   // trim off `<owner>/`
