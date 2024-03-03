@@ -16,7 +16,9 @@
         },
         {
             "src": "/img/pool.jpg",
-            "type": "image/jpg"
+            "sizes":"1280x960",
+            "type": "image/jpg",
+            "density":"2.0"
         }
     ],
     "start_url": "/",
