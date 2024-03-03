@@ -717,7 +717,7 @@ const Home = () => {
         }
 
         .background-img {
-          background-image: url("/img/pool.jpg");
+          background-image: url("img/pool.jpg");
           background-size: cover;
           background-repeat: no-repeat;
           background-attachment: fixed;
