@@ -56,13 +56,13 @@ export default function Home() {
             formTitle: "Secure Your Stay & Get Up to 10% Off *",
             formDescription: "Book directly with us and enjoy lower prices compared to ",
             formFields: {
-                name: "Name*",
-                email: "Email*",
-                phone: "Phone / WhatsApp (Optional)",
+                name: "Your Name*",
+                email: "Your Email*",
+                phone: "Your Phone / WhatsApp (Optional)",
                 checkin: "Check-in Date*",
                 checkout: "Check-out Date*",
                 guests: "Number of Guests*",
-                message: "Special Requests",
+                message: "Your message to us",
                 submit: "Submit Booking Request"
             },
             discountNote: "* 5% off for less than 7 nights, 10% off for more than 7 nights",
@@ -93,13 +93,13 @@ export default function Home() {
             formTitle: "Asegura tu Estancia & Obtén hasta un 10% de Descuento *",
             formDescription: "Reserva directamente con nosotros y disfruta de precios más bajos que en ",
             formFields: {
-                name: "Nombre*",
-                email: "Correo Electrónico*",
-                phone: "Teléfono / WhatsApp (Opcional)",
+                name: "Tu Nombre*",
+                email: "Tu Correo Electrónico*",
+                phone: "Tu Teléfono / WhatsApp (Opcional)",
                 checkin: "Fecha de Entrada*",
                 checkout: "Fecha de Salida*",
                 guests: "Número de Huéspedes*",
-                message: "Peticiones Especiales",
+                message: "Tu mensaje",
                 submit: "Enviar Solicitud de Reserva"
             },
             discountNote: "* 5% de descuento por menos de 7 noches, 10% por más de 7 noches",
@@ -283,16 +283,16 @@ export default function Home() {
                           className="booking-form" onSubmit={() => setShowConfirmation(true)}>
                         {/* Name Field */}
                         <label>{translations[language].formFields.name}</label>
-                        <input type="text" name="name" required placeholder={translations[language].formFields.name}/>
+                        <input type="text" name="name" required placeholder="Maria Garcia"/>
 
                         {/* Email Field */}
                         <label>{translations[language].formFields.email}</label>
                         <input type="email" name="email" required
-                               placeholder={translations[language].formFields.email}/>
+                               placeholder="tony@example.com"/>
 
                         {/* Phone Field */}
                         <label>{translations[language].formFields.phone}</label>
-                        <input type="tel" name="phone" placeholder={translations[language].formFields.phone}/>
+                        <input type="tel" name="phone" placeholder="+34 123 456 789"/>
 
                         {/* Date Range Picker (Check-in & Check-out) */}
                         <label htmlFor="dateRange">
@@ -321,7 +321,10 @@ export default function Home() {
 
                         {/* Number of Guests */}
                         <label>{translations[language].formFields.guests}</label>
-                        <select name="guests" required>
+                        <select name="guests" required defaultValue="">
+                            <option value="" disabled hidden>
+                                -- Select Guests --
+                            </option>
                             {[...Array(4).keys()].map((num) => (
                                 <option key={num + 1} value={num + 1}>
                                     {num + 1}
