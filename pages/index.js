@@ -1,751 +1,535 @@
-import { useState, useEffect, useRef } from "react";
-import { continents, countries, languages } from "countries-list";
-import "bulma/css/bulma.min.css";
-import "bulma-calendar/dist/css/bulma-calendar.min.css";
-// import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
-// import SignatureCanvas from '../components/SignatureCanvas';
-import FormSection from "../components/FormSection";
-import React from "react";
+import Head from "next/head";
+import Image from "next/image";
+import {useState} from "react";
+import Link from "next/link";
 
-import EncodingUtils from "../components/utils/encodingUtils";
-
-import { useRouter } from "next/router";
-import PdfWriter from "../components/PdfWriter";
-// import 'react-phone-number-input/style.css';
-
-import { GenderRadioMolecule } from "../components/form/molecules/GenderRadioMolecule";
-import { CountrySelectionMolecule } from "../components/form/molecules/CountrySelectionMolecule";
-import { TextInputAtom } from "../components/form/atoms/TextInputAtom";
-import { IdSelectionMolecule } from "../components/form/molecules/IdSelectionMolecule";
-import { PhoneInputMolecule } from "../components/form/molecules/PhoneInputMolecule";
-import { DateInputAtom } from "../components/form/atoms/DateInputAtom";
-import { SelectionAtom } from "../components/form/atoms/SelectionAtom";
-import { AgreementCheckboxAtom } from "../components/form/atoms/AgreementCheckboxAtom";
-import { EmailInputAtom } from "../components/form/atoms/EmailInputAtom";
-
-const Home = () => {
-  const [selectedOption, setSelectedOption] = useState(0);
-  const [sections, setSections] = useState(
-    new Array(selectedOption).fill(false)
-  );
-  const [currentSection, setCurrentSection] = useState(0);
-  const [validSections, setValidSections] = useState(
-    new Array(selectedOption).fill(false)
-  );
-
-  const handleOptionChange = (e) => {
-    setSelectedOption(parseInt(e.target.value));
-    setSections(new Array(parseInt(e.target.value)).fill(false));
-    setForm(generateNewForm(selectedOption));
-  };
-
-  const handleSectionToggle = (index) => {
-    const form = formRef.current;
-    if (form.checkValidity()) {
-      // setCurrentSection(index);
-      // const newSections = [...sections];
-      // newSections[index] = !newSections[index];
-      // newSections[currentSection] = true;
-
-      const newSections = sections.map((value, idx) => {
-        return idx === index ? !value : false;
-      });
-
-      // Toggle the selected section
-      setSections(newSections);
-    } else {
-      form.reportValidity();
-    }
-  };
-
-  const generateRandomKey = () => {
-    return Math.random().toString(36).substring(2, 10);
-  };
-
-  const handleNext = () => {
-    const form = formRef.current;
-    if (form.checkValidity()) {
-      setValidSections((prevSections) => {
-        const newSections = [...prevSections];
-        newSections[currentSection] = true;
-        return newSections;
-      });
-
-      const nextSection = currentSection + 1;
-      if (nextSection < sections.length) {
-        setSections((prevSections) => {
-          const newSections = [...prevSections];
-          newSections[currentSection] = false;
-          newSections[nextSection] = true;
-          return newSections;
-        });
-        setCurrentSection(nextSection);
-      } else if (currentSection === sections.length - 1) {
-        setSections((prevSections) => {
-          const newSections = [...prevSections];
-          newSections[currentSection] = false; // Collapse the last section
-          return newSections;
-        });
-      }
-    } else {
-      setValidSections((prevSections) => {
-        const newSections = [...prevSections];
-        newSections[currentSection] = false;
-        return newSections;
-      });
-      form.reportValidity();
-    }
-  };
-  const areAllSectionsValid = () => {
-    return validSections.every((section) => section === true);
-  };
-
-  const formRef = useRef(null);
-  const router = useRouter();
-
-  // Access the query object from the router
-  const { d, m, p, c, x, z, fapi, ps } = router.query;
-
-  // Now you can use parameter1 and parameter2 in your component
-  console.log("Parameter 1:", fapi);
-  // console.log('Parameter 2:', parameter2);
-
-  // const [formData, setFormData] = useState({});
-  const [prevFormData, setPrevFormData] = useState({});
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
-
-  const [sensitive, setSensitive] = useState({
-    formApi: "",
-    $confirmationCode: "XYZ8561",
-  });
-
-  const [buildingData, setBuildingData] = useState({
-    buildingAddress: "",
-    buildingMunicipality: "",
-    buildingProvince: "",
-    buildingPostalCode: "",
-    buildingAppartment: "",
-  });
-
-  const [contractData, setContractData] = useState({
-    contract: "",
-    contractNumber: "",
-    contractDate: "",
-    checkInDate: "",
-    checkOutDate: "",
-  });
-
-  const [ownerData, setOwnerData] = useState({
-    name: "",
-    surname: "",
-    id: "",
-  });
-
-  const initialFormState = {
-    $name: "",
-    $docu: "",
-    $surname: "",
-    $sex: "",
-    $idtype: "",
-    $idnum: "",
-    $nationality: "",
-    $birthdate: "",
-    $homeCountry: "",
-    $homeTown: "",
-    $address: "",
-    email: "",
-    $phone: "",
-    $agreement: "",
-    subject: "",
-    honeypot: "",
-    message: "",
-    replyTo: "@", // this will set replyTo of email to email address entered in the form
-    accessKey: "",
-  };
-
-  const [form, setForm] = useState(initialFormState);
-
-  // Function to generate a new form state with names concatenated with numbers
-  const generateNewForm = (num) => {
-    let newFormState = {};
-    for (let i = 0; i <= num; i++) {
-      for (const key in initialFormState) {
-        if (initialFormState.hasOwnProperty(key)) {
-          newFormState[`${key}${i}`] = ""; // Concatenate number with field name
+export default function Home() {
+    // Translation dictionary
+    const translations = {
+        en: {
+            title: "Your Dream Getaway",
+            heroTitle: "Your Perfect Escape",
+            stars: "⭐⭐⭐⭐⭐",
+            discount: "📢 Get up to 10% OFF when you book directly with us!",
+            bookNow: "Book Now",
+            learnMore: "Learn More",
+            about: "About Our Studio",
+            intro: "Your Dream Stay in Benalmádena",
+            description: "Welcome to Premium Studio Minerva 103, a newly renovated retreat designed for your relaxation.",
+            features: [
+                "🌅 Breathtaking Sea Views – Enjoy morning coffee or sunset drinks from your private balcony.",
+                "🏊‍♂️ Exclusive Pool Complex – Multiple outdoor pools, a water park, and sun loungers for the perfect holiday vibe.",
+                "🍽️ Fully Equipped Kitchen – Everything you need, including a microwave, toaster, and washing machine.",
+                "❄️ Comfort – Air conditioning & heating, high-speed Wi-Fi, and a modern, stylish interior.",
+                "📍 Prime Location – Minutes from the beach, restaurants, and Puerto Marina. Easy access to Málaga Airport (12km)."
+            ],
+            highlight: "💡 Rated 9.1 by couples – Ideal for a romantic escape or a relaxing getaway.",
+            formTitle: "Secure Your Stay & Get Up to 10% Off *",
+            formDescription: "Book directly with us and enjoy lower prices compared to Booking.com",
+            formFields: {
+                name: "Name*",
+                email: "Email*",
+                phone: "Phone / WhatsApp (Optional)",
+                checkin: "Check-in Date*",
+                checkout: "Check-out Date*",
+                guests: "Number of Guests*",
+                message: "Special Requests",
+                submit: "Submit Booking Request"
+            },
+            discountNote: "* 5% off for less than 7 nights, 10% off for more than 7 nights",
+            successMessage: "Thank you! We will contact you soon.",
+            alertMessage: "Your booking request has been submitted. We will contact you soon!",
+            languageToggle: "Español"
+        },
+        es: {
+            title: "Tu Escapada de Ensueño",
+            heroTitle: "Tu Escapada Perfecta",
+            stars: "⭐⭐⭐⭐⭐",
+            discount: "📢 ¡Obtén hasta un 10% de DESCUENTO reservando directamente con nosotros!",
+            bookNow: "Reservar Ahora",
+            learnMore: "Más Información",
+            about: "Sobre Nuestro Estudio",
+            intro: "Tu Estancia de Ensueño en Benalmádena",
+            description: "Bienvenido a Premium Studio Minerva 103, un refugio recién renovado diseñado para tu relajación.",
+            features: [
+                "🌅 Vistas Impresionantes al Mar – Disfruta de tu café matutino o una copa al atardecer desde tu balcón privado.",
+                "🏊‍♂️ Complejo de Piscinas Exclusivo – Varias piscinas al aire libre, un parque acuático y tumbonas para un ambiente vacacional perfecto.",
+                "🍽️ Cocina Totalmente Equipada – Todo lo que necesitas, incluyendo microondas, tostadora y lavadora.",
+                "❄️ Comodidad – Aire acondicionado y calefacción, Wi-Fi de alta velocidad e interior moderno y elegante.",
+                "📍 Ubicación Privilegiada – A minutos de la playa, restaurantes y Puerto Marina. Fácil acceso al aeropuerto de Málaga (12km)."
+            ],
+            highlight: "💡 Calificación 9.1 por parejas – Ideal para una escapada romántica o un retiro relajante.",
+            formTitle: "Asegura tu Estancia & Obtén hasta un 10% de Descuento *",
+            formDescription: "Reserva directamente con nosotros y disfruta de precios más bajos que en Booking.com",
+            formFields: {
+                name: "Nombre*",
+                email: "Correo Electrónico*",
+                phone: "Teléfono / WhatsApp (Opcional)",
+                checkin: "Fecha de Entrada*",
+                checkout: "Fecha de Salida*",
+                guests: "Número de Huéspedes*",
+                message: "Peticiones Especiales",
+                submit: "Enviar Solicitud de Reserva"
+            },
+            discountNote: "* 5% de descuento por menos de 7 noches, 10% por más de 7 noches",
+            successMessage: "¡Gracias! Nos pondremos en contacto contigo pronto.",
+            alertMessage: "Tu solicitud de reserva ha sido enviada. ¡Nos pondremos en contacto contigo pronto!",
+            languageToggle: "English"
         }
-      }
-    }
-    console.log(newFormState);
-    return newFormState;
-  };
+    };
 
-  // Whenever the name property changes, update the subject accordingly
-  useEffect(() => {
-    setForm((prevForm) => ({
-      ...prevForm,
-      subject: "Booking: " + prevForm["$name0"] + " " + prevForm["$surname0"], // Assign the value of name to subject
-      $docu: p,
-      accessKey: x,
-      // $jsonifiedForm: JSON.stringify(form),
-    }));
-    console.log("aaaa", form);
 
-    setSensitive((s) => ({
-      ...s,
-      formApi: fapi,
-    }));
+    const [language, setLanguage] = useState("en"); // Language state (English default)
 
-    setBuildingData((buildingData) => ({
-      ...buildingData,
-      buildingAddress: d,
-      buildingMunicipality: m,
-      buildingProvince: p,
-      buildingPostalCode: c,
-      buildingAppartment: ps,
-    }));
-  }, [
-    sections,
-    form["$name0"],
-    form.$surname,
-    form.$docu,
-    form.accessKey,
-    sensitive.formApi,
-  ]);
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        checkin: "",
+        checkout: "",
+        guests: 1,
+        message: "",
+    });
 
-  const [response, setResponse] = useState({
-    type: "",
-    message: "",
-  });
+    const [submitted, setSubmitted] = useState(false);
 
-  const handleContinue = () => {
-    const form = formRef.current;
+    const handleChange = (e) => {
+        setFormData({...formData, [e.target.name]: e.target.value});
+    };
 
-    // console.log('Form:', form); // Check the form reference
-    // console.log(form.checkValidity()); // Check if form is valid
-    if (form.checkValidity() && areAllSectionsValid()) {
-      // Form is valid, continue with the next step
-      setIsPreviewMode(true);
-      console.log("Form is valid");
-    } else {
-      // Form is invalid, display
-      setIsPreviewMode(false);
-      console.log("Form is invalid");
-      form.reportValidity();
-    }
-  };
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     setSubmitted(true);
+    //     console.log("Booking Request Submitted:", formData);
+    //     alert("Your booking request has been submitted. We will contact you soon!");
+    // };
 
-  const handleEdit = () => {
-    setIsPreviewMode(false);
-  };
 
-  const handleChange = (e) => {
-    console.log(e);
-    const { name, value } = e.target;
-    let updatedValue = value;
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setSubmitted(true);
+        console.log("Booking Request Submitted:", formData);
+        alert(translations[language].alertMessage);
+    };
 
-    const regex1 = new RegExp(`^$name`);
-    const regex2 = new RegExp(`^$homeTown`);
-    const regex3 = new RegExp(`^$address`);
-    const regex4 = new RegExp(`^$surname`);
 
-    if (
-      regex1.test(name) ||
-      regex2.test(name) ||
-      regex3.test(name) ||
-      regex4.test(name)
-    ) {
-      // Capitalize the first letter of each word
-      updatedValue = value
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-    }
 
-    // setForm({ ...form, [name]: updatedValue });
 
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: updatedValue,
-    }));
-  };
 
-  const handleReDownload = async () => {
-    const mergedObj = { ...form, ...contractData, ...buildingData };
-    const jsonString = JSON.stringify(mergedObj);
-    console.log("Maravilloso ", jsonString);
-    const pdfWriter = PdfWriter(mergedObj);
-    const blob = await pdfWriter.handlePDF();
-    const base64String = await EncodingUtils._arrayBufferToBase64(blob);
-    // setForm({ ...form, $docu: "test 123456" }); // TODO: doesn't work.
-  }
+    return (
+        <>
+            <Head>
+                <title>Your Dream Getaway</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;700&display=swap"
+                    rel="stylesheet"
+                />
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+                    rel="stylesheet"
+                />
+            </Head>
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await handleReDownload();
 
-      const jsonifiedForm = JSON.stringify(form);
-      // const newForm = { ...form, $jsonifiedForm: jsonifiedForm };
-      // setForm(newForm);
-      
 
-      const res = await fetch("https://" + sensitive.formApi + "/submit", {
-        method: "POST",
-        body: jsonifiedForm,
-        headers: { "Content-Type": "application/json" },
-      });
+            <main>
+                {/* Language Toggle Button */}
+                <button className="language-toggle" onClick={() => setLanguage(language === "en" ? "es" : "en")}>
+                    {translations[language].languageToggle}
+                </button>
 
-      const json = await res.json();
+                {/* Hero Section */}
+                <section className="hero">
+                    <div className="glass-overlay"></div>
+                    <Image
+                        className="hero-image"
+                        // src="https://www.decorilla.com/online-decorating/wp-content/uploads/2020/01/studio-apartment-layout-ideas-nyc-decorilla.jpg"
+                        src="https://cf.bstatic.com/xdata/images/hotel/max1280x900/403651919.jpg?k=7ec0e408f51ee4fb53711c64d5727ba6be0ae6996aba400b92f3931a0a2b49fd&o=&hp=1"
+                        alt="Beautiful Studio/Apartment"
+                        layout="fill"
+                        objectFit="cover"
+                        priority
+                    />
+                    <div className="hero-content">
+                        <h1 className="hero-title">{translations[language].heroTitle}</h1>
+                        <h2>⭐⭐⭐⭐⭐</h2>
 
-      if (json.success) {
-        setResponse({
-          type: "success",
-          confirmMessage1: "Hemos recibido sus datos para el check-in",
-          confirmMessage2:
-            "Les recordamos que todos los huespedes mayores de 16 deberan cumplimentar este formulario online",
-          confirmMessage3:
-            "El dia del check in por favor traiga documentacion que acredite los datos aportados para todos los huespedes",
-          message: "Gracias por elejir nuestro apartamento.",
-        });
-      } else {
-        setResponse({
-          type: "error",
-          message: json.message,
-        });
-      }
-    } catch (e) {
-      console.log("An error occurred", e);
-      setResponse({
-        type: "error",
-        message: "An error occured while submitting the form",
-      });
-    }
-  };
-  return (
-    <div className="background-container">
-      <div className="background-img" />
-      <div className="background-overlay" />
-      <div className="section">
-        <div className="container">
-          <div className="columns">
-            <div className="column" />
-            <div className="column  is-two-thirds">
-              <div
-                className={
-                  response.type === "success"
-                    ? "box notification is-success "
-                    : "is-hidden"
-                }
-              >
-                <p>{response.confirmMessage1}</p>
-                <br />
-                <p>
-                  <strong>Codigo de confirmacion:</strong>{" "}
-                  {sensitive.$confirmationCode}
-                </p>
-              </div>
-
-              <div
-                className={
-                  response.type === "success"
-                    ? "box notification is-info is-multiline content is-small"
-                    : "is-hidden"
-                }
-              >
-                <em>
-                  <p>{response.confirmMessage2}</p>
-                  <p>{response.confirmMessage3}</p>
-                  <p>{response.message}</p>
-                </em>
-                {/* <div className="form-preview-buttons">
-                  <button className="button is-warning is-large" type="button" onClick={handleReDownload}>Bajar formulario de check-in</button>
-                </div> */}
-              </div>
-              <button
-                className={
-                  response.type === "success"
-                    ? "notification button is-warning is-large"
-                    : "is-hidden"
-                }
-                type="button"
-                onClick={handleReDownload}
-              >
-                Download PDF again
-              </button>
-              <br />
-              <a
-                className={
-                  response.type === "success"
-                    ? "notification button is-primary is-medium"
-                    : "is-hidden"
-                }
-                href="/"
-              >
-                Start new
-              </a>
-
-              <div
-                className={
-                  response.type === "error"
-                    ? "tile box notification is-danger"
-                    : "is-hidden"
-                }
-              >
-                <p>{response.message}</p>
-              </div>
-              <div
-                className={response.message !== "" ? "is-hidden" : "columns"}
-              >
-                <div className="column content form-container">
-                  <h2>Formulario De Auto-Registro (Self Check-in)</h2>
-
-                  {!isPreviewMode ? (
-                    <div>
-                      Huesped(es)
-                      <SelectionAtom
-                        selectionList={[1, 2, 3, 4]}
-                        name="numhosts"
-                        value={selectedOption}
-                        handleChange={handleOptionChange}
-                      />
-                      <form
-                        ref={formRef}
-                        id="my-form"
-                        action="https://api.staticforms.xyz/submit"
-                        method="post"
-                        onSubmit={handleSubmit}
-                        autoComplete="on"
-                      >
-                        {sections.map((isOpen, index) => (
-                          <FormSection
-                            key={`Huesped ${index + 1}`}
-                            title={`Huesped ${index + 1}`}
-                            isOpen={isOpen}
-                            onToggle={() => handleSectionToggle(index)}
-                            onContinue={handleNext}
-                            sectionNumber={index + 1}
-                          >
-                            <TextInputAtom
-                              key={"$name" + index}
-                              title="Nombre completo"
-                              name={"$name" + index}
-                              value={form["$name" + index]}
-                              handleChange={handleChange}
-                              placeholder="Maria Francisca Gomez"
-                              maxLength="82"
-                              required
-                            ></TextInputAtom>
-                            <TextInputAtom
-                              key={"$surname" + index}
-                              title="Apellido completo"
-                              name={"$surname" + index}
-                              value={form["$surname" + index]}
-                              handleChange={handleChange}
-                              placeholder="Garcia Jimenez del Hierro"
-                              maxLength="82"
-                              required
-                            ></TextInputAtom>
-
-                            <GenderRadioMolecule
-                              key={"$sex" + index}
-                              name={"$sex" + index}
-                              selection={form["$sex" + index]}
-                              handleChange={handleChange}
-                              index={index}
-                            ></GenderRadioMolecule>
-                            <CountrySelectionMolecule
-                              key={"$nationality" + index}
-                              title="Nationality"
-                              name={"$nationality" + index}
-                              value={form["$nationality" + index]}
-                              handleChange={handleChange}
-                            ></CountrySelectionMolecule>
-                            <IdSelectionMolecule
-                              key={"$idtype" + index}
-                              title="Tipo documento identidad"
-                              name={"$idtype" + index}
-                              value={form["$idtype" + index]}
-                              handleChange={handleChange}
-                            />
-
-                            <TextInputAtom
-                              key={"$idnum" + index}
-                              title="Numero documento de identidad"
-                              name={"$idnum" + index}
-                              value={form["$idnum" + index]}
-                              handleChange={handleChange}
-                              placeholder={"X91561553M"}
-                              maxLength="72"
-                              required
-                            ></TextInputAtom>
-
-                            <DateInputAtom
-                              key={"$birthdate" + index}
-                              title="Fecha nacimiento"
-                              name={"$birthdate" + index}
-                              value={form["$birthdate" + index]}
-                              handleChange={handleChange}
-                              required
-                            />
-
-                            <CountrySelectionMolecule
-                              key={"$homeCountry" + index}
-                              title="Pais de residencia"
-                              name={"$homeCountry" + index}
-                              value={form["$homeCountry" + index]}
-                              handleChange={handleChange}
-                            ></CountrySelectionMolecule>
-
-                            <TextInputAtom
-                              key={"$homeTown" + index}
-                              title="Localidad de residencia"
-                              name={"$homeTown" + index}
-                              value={form["$homeTown" + index]}
-                              handleChange={handleChange}
-                              placeholder="Paracuellos de Jarama"
-                              maxLength="72"
-                              required
-                            ></TextInputAtom>
-                            <TextInputAtom
-                              key={"$address" + index}
-                              title="Dirreccion de residencia"
-                              name={"$address" + index}
-                              value={form["$address" + index]}
-                              handleChange={handleChange}
-                              placeholder="C. de Arturo Soria, 327-325, Cdad. Lineal, 28033 Madrid"
-                              maxLength="72"
-                              required
-                            ></TextInputAtom>
-
-                            <PhoneInputMolecule
-                              key={"$phone" + index}
-                              title="Numero de telefono movil"
-                              name={"$phone" + index}
-                              value={form["$phone" + index]}
-                              handleChange={handleChange}
-                              required
-                            ></PhoneInputMolecule>
-
-                            <EmailInputAtom
-                              key={"$email" + index}
-                              title="E-mail"
-                              name={"$email" + index}
-                              value={form["$email" + index]}
-                              handleChange={handleChange}
-                              index={index}
-                            ></EmailInputAtom>
-
-                            <AgreementCheckboxAtom
-                              key={"$agreement" + index}
-                              title="Agreement"
-                              name={"$agreement" + index}
-                              value={form["$agreement" + index]}
-                              handleChange={handleChange}
-                              index={index}
-                            ></AgreementCheckboxAtom>
-
-                            <div className="field" style={{ display: "none" }}>
-                              <label className="label">Title</label>
-                              <div className="control">
-                                <input
-                                  type="text"
-                                  name="honeypot"
-                                  style={{ display: "none" }}
-                                  onChange={handleChange}
-                                />
-                                <input
-                                  type="hidden"
-                                  name="subject"
-                                  onChange={handleChange}
-                                />
-                              </div>
-                            </div>
-
-                            <div></div>
-                          </FormSection>
-                        ))}
-                      </form>
-                      <div className="field is-grouped">
-                        <div className="control">
-                          <button
-                            className="button is-primary"
-                            type="button"
-                            onClick={handleContinue}
-                          >
-                            Continue
-                          </button>
+                        {/* Discount Offer */}
+                        <div className="hero-subtitle">
+                            <p>📢 Get up to <strong>10% OFF</strong> when you book directly with us!</p>
                         </div>
-                      </div>
+
+                        <a href="#submit-info" className="cta-button hero-subtitle">
+                            Book Now
+                        </a>
+
+                        <p className="discount-box">
+                            Experience comfort and tranquility in our stunning studio.
+                        </p>
+                        <a href="#details" className="cta-button">
+                            Learn More
+                        </a>{" "}
+
                     </div>
-                  ) : (
-                    sections.map((isOpen, index) => (
-                      <div className="form-preview-container">
-                        <h3>Confirmar los datos {index + 1}</h3>
-                        <div className="form-preview-content">
-                          <p>
-                            <strong>Nombre:</strong> {form["$name" + index]}
-                          </p>
-                          <p>
-                            <strong>Apellido:</strong>{" "}
-                            {form["$surname" + index]}
-                          </p>
-                          <p>
-                            <strong>Genero:</strong> {form["$sex" + index]}
-                          </p>
-                          <p>
-                            <strong>Tipo documento de identidad:</strong>{" "}
-                            {form["$idtype" + index]}
-                          </p>
-                          <p>
-                            <strong>Numero documento identidad:</strong>{" "}
-                            {form["$idnum" + index]}
-                          </p>
-                          <p>
-                            <strong>Nacionalidad:</strong>{" "}
-                            {form["$nationality" + index]}
-                          </p>
-                          <p>
-                            <strong>Fecha de nacimiento:</strong>{" "}
-                            {form["$birthdate" + index]}
-                          </p>
-                          <p>
-                            <strong>Pais de residencia:</strong>{" "}
-                            {form["$homeCountry" + index]}
-                          </p>
-                          <p>
-                            <strong>Ciudad de residencia:</strong>{" "}
-                            {form["$homeTown" + index]}
-                          </p>
-                          <p>
-                            <strong>Dirreccion de residencia:</strong>{" "}
-                            {form["$address" + index]}
-                          </p>
-                          <p>
-                            <strong>Email:</strong> {form["$email" + index]}
-                          </p>
-                          <p>
-                            <strong>Telefono:</strong> {form["$phone" + index]}
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                  {isPreviewMode ? (
-                    <div className="form-preview-buttons">
-                      <div className="control">
-                        <button
-                          className="button is-primary"
-                          type="submit"
-                          onClick={handleSubmit}
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          className="button"
-                          type="button"
-                          onClick={handleEdit}
-                        >
-                          Edit
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div />
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="column" />
-          </div>
-        </div>
-      </div>
+                </section>
 
-      <style jsx>{`
-        .notification {
-          z-index: 4;
-        }
+                {/* Details Section */}
+                <section id="details" className="details">
+                    <h2>About Our Studio</h2>
 
-        .form-preview-container {
-          padding: 20px;
-          border: 1px solid #ccc; /* Add a 1px solid border */
-          border-radius: 25px; /* Add some border radius for rounded corners */
-          background-color: rgba(205, 215, 205, 0.4);
-        }
+                    <p className="intro">Your Dream Stay in Benalmádena</p>
 
-        .form-preview-buttons {
-          margin-top: 20px;
-          display: flex;
-          justify-content: space-between; /* Add space between buttons */
-        }
+                    <p>Welcome to <strong>Premium Studio Minerva 103</strong>, a newly
+                        renovated <strong>retreat</strong> designed for your relaxation.</p>
+                    <p>Nestled in the heart
+                        of <strong>Benalmádena</strong>, just <strong>650m from the beach</strong>, this studio offers
+                        a <strong>perfect blend of elegance, comfort, and convenience</strong></p>
 
-        .form-preview-buttons button {
-          flex: 1; /* Each button takes equal space */
-          margin-right: 10px; /* Add right margin between buttons */
-        }
-        .form-preview-buttons button:last-child {
-          margin-right: 0; /* Remove margin from the last button */
-        }
+                    <h2>Why Choose This Stay?</h2>
 
-        @media only screen and (max-width: 768px) {
-          .background-container {
-            overflow-x: hidden;
-          }
-        }
+                    <ul className="features">
+                        <li><strong>🌅 Breathtaking Sea Views</strong> – Enjoy morning coffee or sunset drinks from your
+                            private balcony.
+                        </li>
+                        <li><strong>🏊‍♂️ Exclusive Pool Complex</strong> – Multiple outdoor pools, a <strong>water
+                            park</strong>, and sun loungers for the perfect holiday vibe.
+                        </li>
+                        <li><strong>🍽️ Fully Equipped Kitchen</strong> – Everything you need, including a <strong>microwave,
+                            toaster, and washing machine</strong>.
+                        </li>
+                        <li><strong>❄️ Comfort</strong> – <strong>Air conditioning & heating</strong>,
+                            high-speed <strong>Wi-Fi</strong>, and a <strong>modern, stylish interior</strong>.
+                        </li>
+                        <li><strong>📍 Prime Location</strong> – <strong>Minutes from the beach, restaurants, and Puerto
+                            Marina</strong>. Easy access to Málaga Airport (12km).
+                        </li>
+                    </ul>
 
-        .background-container {
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-attachment: fixed;
-          position: relative;
-          width: 100vw;
-          height: 100vh;
-          left: 0;
-          top: 0;
-          margin: 0;
-          padding: 0;
-        }
+                    <p className="highlight">💡 <strong>Rated 9.1 by couples</strong> – Ideal for a romantic escape or a
+                        relaxing getaway.</p>
+                    <br/>
 
-        .background-overlay {
-          filter: blur(8px); /* Adjust the blur value as needed */
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: rgba(205, 215, 205, 0.4); /* Adjust opacity here */
-          z-index: 1; /* Ensure the overlay is behind the form */
-        }
+                    <a href="#submit-info" className="cta-button">
+                        Book Now
+                    </a>
+                </section>
 
-        .background-img {
-          background-image: url("./img/pool.jpg");
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-attachment: fixed;
-          filter: blur(8px); /* Adjust the blur value as needed */
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100vw;
-          height: 100vh;
-          margin: 0;
-          padding: 0;
+                <section id="submit-info" className="submit-info">
+                    <h1>Secure Your Stay & Get Up to 10% Off *</h1>
+                    <p>Book directly with us and enjoy lower prices compared to <a
+                        href="https://www.booking.com/hotel/es/nuevo-premium-studio-con-piscina-minerva-jupiter.en-gb.html"
+                        target="_blank">Booking.com</a>
+                    </p>
 
-          z-index: 1; /* Ensure the overlay is behind the form */
-        }
 
-        .form-container {
-          position: relative;
-          z-index: 2; /* Ensure the form is above the overlay */
-        }
+                    <Link
+                        href="https://www.booking.com/hotel/es/nuevo-premium-studio-con-piscina-minerva-jupiter.en-gb.html">
+                        Booking.com.
+                    </Link>
 
-        .form-container .content {
-          max-height: calc(100vh - 100px); /* Adjust as needed */
-          overflow-y: auto;
-          padding: 20px;
-        }
-      `}</style>
-    </div>
-  );
-};
+                    <form onSubmit={handleSubmit} className="booking-form">
+                        <label>Name*</label>
+                        <input type="text" name="name" required onChange={handleChange}/>
 
-export default Home;
+                        <label>Email*</label>
+                        <input type="email" name="email" required onChange={handleChange}/>
+
+                        <label>Phone / WhatsApp (Optional)</label>
+                        <input type="tel" name="phone" onChange={handleChange}/>
+
+
+                        <label>Check-in Date*</label>
+                        <input type="date" name="checkin" required onChange={handleChange}/>
+
+                        <label>Check-out Date*</label>
+                        <input type="date" name="checkout" required onChange={handleChange}/>
+
+                        <label>Number of Guests*</label>
+                        <select name="guests" required onChange={handleChange}>
+                            {[...Array(4).keys()].map((num) => (
+                                <option key={num + 1} value={num + 1}>
+                                    {num + 1}
+                                </option>
+                            ))}
+                        </select>
+
+                        <label>Special Requests</label>
+                        <textarea name="message" rows="3" onChange={handleChange}></textarea>
+
+                        <button type="submit">Submit Booking Request</button>
+                        <p>* 5% off for less than 7 nights, 10% off for more than 7 nights</p>
+
+                        {submitted && <p className="success-message">Thank you! We will contact you soon.</p>}
+                    </form>
+                </section>
+
+                {/* Contact Section */}
+                {/*<section id="contact" className="contact-info">*/}
+                {/*    <h2>Contact Us</h2>*/}
+                {/*    <a*/}
+                {/*        href="/book"*/}
+                {/*        target="_blank"*/}
+                {/*        rel="noopener noreferrer"*/}
+                {/*        className="contact-link"*/}
+                {/*    >*/}
+                {/*        Book with us*/}
+                {/*    </a>*/}
+                {/*    <a*/}
+                {/*        href="https://t.me/yourtelegramusername"*/}
+                {/*        target="_blank"*/}
+                {/*        rel="noopener noreferrer"*/}
+                {/*        className="contact-link"*/}
+                {/*    >*/}
+                {/*        Telegram*/}
+                {/*    </a>*/}
+                {/*    <a*/}
+                {/*        href="https://wa.me/yourphonenumber"*/}
+                {/*        target="_blank"*/}
+                {/*        rel="noopener noreferrer"*/}
+                {/*        className="contact-link"*/}
+                {/*    >*/}
+                {/*        WhatsApp*/}
+                {/*    </a>*/}
+                {/*    <a href="mailto:youremail@example.com" className="contact-link">*/}
+                {/*        Email*/}
+                {/*    </a>*/}
+                {/*</section>*/}
+            </main>
+
+            <style jsx>{`
+                body {
+                    font-family: "Poppins", sans-serif;
+                    margin: 0;
+                    color: #333;
+                    background-color: #f8f8f8;
+                    line-height: 1.6;
+                }
+
+                .hero {
+                    position: relative;
+                    height: 85vh;
+                    overflow: hidden;
+                }
+
+                .hero-image {
+                    filter: brightness(0.5);
+                }
+
+                .glass-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    backdrop-filter: blur(6px) saturate(120%);
+                    background: rgba(255, 255, 255, 0.15); /* Glass effect */
+                    z-index: 1;
+                }
+
+                .hero-content {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    text-align: center;
+                    color: white;
+                    z-index: 2;
+                }
+
+                .hero-title {
+                    font-family: "Playfair Display", serif;
+                    font-size: 3.5em;
+                    margin-bottom: 20px;
+                    font-weight: 700;
+                }
+
+                .hero-subtitle {
+                    font-size: 1.4em;
+                    margin-bottom: 40px;
+                }
+
+                .cta-button {
+                    display: inline-block;
+                    padding: 15px 30px;
+                    background-color: #007bff;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-weight: 700;
+                    transition: background-color 0.3s ease;
+                }
+
+                .cta-button:hover {
+                    background-color: #0056b3;
+                }
+
+                .details {
+                    padding: 40px;
+                    text-align: center;
+                }
+
+                .details h2 {
+                    font-size: 2em;
+                    margin-bottom: 20px;
+                }
+
+                .details p {
+                    font-size: 1.1em;
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+
+                .contact-info {
+                    text-align: center;
+                    padding: 30px;
+                    background-color: #fff;
+                    border-top: 1px solid #eee;
+                }
+
+                .submit-info {
+                    text-align: center;
+                    padding: 30px;
+                    background-color: #fff;
+                    border-top: 1px solid #eee;
+                }
+
+                .contact-link {
+                    display: inline-block;
+                    margin: 0 15px;
+                    padding: 12px 25px;
+                    background-color: #343a40;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    transition: background-color 0.3s ease;
+                }
+
+                .contact-link:hover {
+                    background-color: #23272b;
+                }
+
+                .booking-form {
+                    display: flex;
+                    flex-direction: column;
+                    max-width: 500px;
+                    margin: 0 auto;
+                    text-align: left;
+                }
+
+                .booking-form label {
+                    margin-top: 10px;
+                    font-weight: bold;
+                }
+
+                .booking-form input,
+                .booking-form select,
+                .booking-form textarea {
+                    padding: 10px;
+                    margin: 5px 0;
+                    width: 100%;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                }
+
+                .booking-form button {
+                    margin-top: 15px;
+                    padding: 12px;
+                    background-color: #007bff;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 1rem;
+                }
+
+                .booking-form button:hover {
+                    background-color: #0056b3;
+                }
+
+                .success-message {
+                    color: green;
+                    margin-top: 10px;
+                    font-weight: bold;
+                }
+
+                @media (max-width: 768px) {
+                    .hero-title {
+                        font-size: 2.5em;
+                    }
+
+                    .hero-subtitle {
+                        font-size: 1.2em;
+                    }
+
+                    .details h2 {
+                        font-size: 1.6em;
+                    }
+
+                    .details p {
+                        font-size: 1em;
+                    }
+                }
+
+                .submit-info {
+                    position: relative;
+                    padding: 50px 20px;
+                    text-align: center;
+                    background: url("https://cf.bstatic.com/xdata/images/hotel/max1280x900/492287971.jpg?k=9069d3d993a54148c97ed7fd9ab66a161edf90c9800f0a3a3e2fa3de808b2fef&o=&hp=1") no-repeat center center/cover;
+                    color: white;
+                    overflow: hidden;
+
+                    /* Apply fading effect at edges */
+                    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%);
+                    mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%);
+
+
+                }
+
+                .submit-info::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    backdrop-filter: blur(6px) saturate(120%);
+                    background: rgba(255, 255, 255, 0.15); /* Glass effect */
+                    z-index: 1;
+                }
+
+                .submit-info h1,
+                .submit-info p,
+                .submit-info form {
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .features {
+                    list-style: none;
+                    padding: 0;
+                    max-width: 800px;
+                    margin: 0 auto 20px;
+                    text-align: left;
+                }
+
+                .features li {
+                    font-size: 1.2em;
+                    margin-bottom: 10px;
+                    padding-left: 25px;
+                    position: relative;
+                }
+
+                .features li::before {
+                    content: "✔";
+                    color: #ffcc00;
+                    font-size: 1.3em;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                }
+
+            `}</style>
+        </>
+    );
+}
