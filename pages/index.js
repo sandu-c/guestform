@@ -1,9 +1,37 @@
 import Head from "next/head";
 import Image from "next/image";
-import {useState} from "react";
-import Link from "next/link";
+import React, {useEffect, useState} from "react";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/flatpickr.min.css"; // Import Flatpickr styles
+import ICAL from "ical.js";
 
 export default function Home() {
+
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [disabledDates, setDisabledDates] = useState([]); // Stores unavailable dates
+
+    // const icsUrl = "https://your-calendar-url.ics"; // Replace with your .ics file URL
+    const icsUrl = "/export.ics"; // Replace with your .ics file URL
+
+    useEffect(() => {
+        fetch(icsUrl)
+            .then(response => response.text())
+            .then(data => {
+                const jcalData = ICAL.parse(data);
+                const comp = new ICAL.Component(jcalData);
+                const events = comp.getAllSubcomponents("vevent");
+
+                const unavailableDates = events.map(event => {
+                    const vevent = new ICAL.Event(event);
+                    return {from: vevent.startDate.toJSDate(), to: vevent.endDate.toJSDate()}; // Convert to JavaScript Date object
+                });
+
+                setDisabledDates(unavailableDates);
+            })
+            .catch(error => console.error("Error fetching .ics:", error));
+    }, []);
+
     // Translation dictionary
     const translations = {
         en: {
@@ -40,7 +68,8 @@ export default function Home() {
             discountNote: "* 5% off for less than 7 nights, 10% off for more than 7 nights",
             successMessage: "Thank you! We will contact you soon.",
             alertMessage: "Your booking request has been submitted. We will contact you soon!",
-            languageToggle: "Español"
+            languageToggle: "Español",
+            thanksMessage: "Thank you! Your submission has been received. We will contact you soon"
         },
         es: {
             title: "Tu Escapada de Ensueño",
@@ -76,10 +105,10 @@ export default function Home() {
             discountNote: "* 5% de descuento por menos de 7 noches, 10% por más de 7 noches",
             successMessage: "¡Gracias! Nos pondremos en contacto contigo pronto.",
             alertMessage: "Tu solicitud de reserva ha sido enviada. ¡Nos pondremos en contacto contigo pronto!",
-            languageToggle: "English"
+            languageToggle: "English",
+            thanksMessage: "¡Gracias por tu reserva! Nos pondremos en contacto contigo pronto."
         }
     };
-
 
     const [language, setLanguage] = useState("en"); // Language state (English default)
 
@@ -113,9 +142,6 @@ export default function Home() {
         console.log("Booking Request Submitted:", formData);
         alert(translations[language].alertMessage);
     };
-
-
-
 
 
     return (
@@ -253,25 +279,49 @@ export default function Home() {
                     {/*    Booking.com.*/}
                     {/*</Link>*/}
 
-                    <form onSubmit={handleSubmit} className="booking-form">
+                    <form action="https://api.staticforms.xyz/submit" method="post" target="hidden_iframe"
+                          className="booking-form" onSubmit={() => setShowConfirmation(true)}>
+                        {/* Name Field */}
                         <label>{translations[language].formFields.name}</label>
-                        <input type="text" name="name" required onChange={handleChange}/>
+                        <input type="text" name="name" required placeholder={translations[language].formFields.name}/>
 
+                        {/* Email Field */}
                         <label>{translations[language].formFields.email}</label>
-                        <input type="email" name="email" required onChange={handleChange}/>
+                        <input type="email" name="email" required
+                               placeholder={translations[language].formFields.email}/>
 
+                        {/* Phone Field */}
                         <label>{translations[language].formFields.phone}</label>
-                        <input type="tel" name="phone" onChange={handleChange}/>
+                        <input type="tel" name="phone" placeholder={translations[language].formFields.phone}/>
 
+                        {/* Date Range Picker (Check-in & Check-out) */}
+                        <label htmlFor="dateRange">
+                            {translations[language].formFields.checkin} - {translations[language].formFields.checkout} *
+                        </label>
+                        <Flatpickr
+                            id="dateRange"
+                            name="dateRange"
+                            value={dateRange}
+                            onChange={(selectedDates) => setDateRange(selectedDates)}
+                            options={{
+                                mode: "range",
+                                dateFormat: "d-m-Y",
+                                minDate: new Date().fp_incr(1),
+                                disable: disabledDates,
+                                disableMobile: "true",
+                            }}
+                            className="date-picker"
+                        />
 
-                        <label>{translations[language].formFields.checkin}</label>
-                        <input type="date" name="checkin" required onChange={handleChange}/>
+                        {/* Hidden fields for StaticForms submission */}
+                        <input type="hidden" name="$checkin"
+                               value={dateRange[0] ? dateRange[0].toISOString().split("T")[0] : ""}/>
+                        <input type="hidden" name="$checkout"
+                               value={dateRange[1] ? dateRange[1].toISOString().split("T")[0] : ""}/>
 
-                        <label>{translations[language].formFields.checkout}</label>
-                        <input type="date" name="checkout" required onChange={handleChange}/>
-
+                        {/* Number of Guests */}
                         <label>{translations[language].formFields.guests}</label>
-                        <select name="guests" required onChange={handleChange}>
+                        <select name="guests" required>
                             {[...Array(4).keys()].map((num) => (
                                 <option key={num + 1} value={num + 1}>
                                     {num + 1}
@@ -279,14 +329,119 @@ export default function Home() {
                             ))}
                         </select>
 
+                        {/* Special Requests */}
                         <label>{translations[language].formFields.message}</label>
-                        <textarea name="message" rows="3" onChange={handleChange}></textarea>
+                        <textarea name="message" rows="3"
+                                  placeholder={translations[language].formFields.message}></textarea>
 
+                        {/* Honeypot Field (Spam Prevention) */}
+                        <input type="text" name="honeypot" style={{display: "none"}}/>
+
+                        {/* StaticForms Required Hidden Fields */}
+                        <input type="hidden" name="accessKey" value="1a5563e6-caa7-4e3a-bf5e-9bfe56ff94ab"/>
+                        <input type="hidden" name="subject"
+                               value="New Booking Request from Premium Studio Minerva 103"/>
+                        <input type="hidden" name="replyTo" value="@"/>
+                        <input type="hidden" name="redirectTo" value="/submit-info"/>
+
+                        {/* Submit Button */}
                         <button type="submit">{translations[language].formFields.submit}</button>
-                        <p>{translations[language].discountNote}</p>
 
-                        {submitted && <p className="success-message">{translations[language].successMessage}</p>}
+                        <p>{translations[language].discountNote}</p>
                     </form>
+
+                    {/*<iframe name="hidden_iframe" style={{display: "none"}}></iframe>*/}
+                    {/*<div id="confirmation" style={{display: "none", color: "green", fontWeight: "bold"}}>*/}
+                    {/*    ✅ Thank you! Your submission has been received.*/}
+                    {/*</div>*/}
+
+                    {/* Hidden Iframe to Catch Response */}
+                    <iframe name="hidden_iframe" style={{display: "none"}}
+                            onLoad={() => setShowConfirmation(true)}></iframe>
+
+                    {/* Confirmation Message */}
+                    {/*{showConfirmation && (*/}
+                    {/*    <div id="confirmation" style={{color: "green", fontWeight: "bold", marginTop: "14px", zIndex: "999" }}>*/}
+                    {/*        ✅ Thank you! Your submission has been received.*/}
+                    {/*    </div>*/}
+                    {/*)}*/}
+
+                    {/*{showConfirmation && (*/}
+                    {/*    <div id="confirmation"*/}
+                    {/*         style={{*/}
+                    {/*             position: "absolute",  // Make it float above everything*/}
+                    {/*             top: "50%",            // Center it vertically*/}
+                    {/*             left: "50%",           // Center it horizontally*/}
+                    {/*             transform: "translate(-50%, -50%)", // Ensure perfect centering*/}
+                    {/*             backgroundColor: "rgba(255, 255, 255, 0.9)", // Light background to ensure readability*/}
+                    {/*             padding: "80px 90px",  // Increased padding for more height*/}
+                    {/*             borderRadius: "8px",*/}
+                    {/*             boxShadow: "0px 40px 10px rgba(0,0,0,0.2)", // Add some shadow for contrast*/}
+                    {/*             zIndex: "9999",        // Ensure it's above the blur overlay*/}
+                    {/*             color: "green",*/}
+                    {/*             fontWeight: "bold",*/}
+                    {/*             fontSize: "1.2em",*/}
+                    {/*             textAlign: "center",*/}
+                    {/*         }}*/}
+                    {/*    >*/}
+                    {/*        ✅ {translations[language].thanksMessage}*/}
+                    {/*    </div>*/}
+                    {/*)}*/}
+
+                    {showConfirmation && (
+                        <div id="confirmation-overlay"
+                             style={{
+                                 position: "fixed",  // Full-screen overlay
+                                 top: "0",
+                                 left: "0",
+                                 width: "100%",
+                                 height: "100%",
+                                 backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent dark background
+                                 display: "flex",
+                                 justifyContent: "center",
+                                 alignItems: "center",
+                                 zIndex: "99999" // Ensure it's above everything
+                             }}
+                        >
+                            <div id="confirmation-box"
+                                 style={{
+                                     backgroundColor: "rgba(255, 255, 255, 0.95)", // White box for better visibility
+                                     padding: "60px",
+                                     width: "90%",
+                                     maxWidth: "500px", // Keep it responsive
+                                     borderRadius: "12px",
+                                     boxShadow: "0px 6px 20px rgba(0,0,0,0.3)", // Subtle shadow for depth
+                                     textAlign: "center",
+                                     display: "flex",
+                                     flexDirection: "column",
+                                     justifyContent: "center",
+                                     alignItems: "center",
+                                 }}
+                            >
+                                <h2 style={{color: "green", fontSize: "1.5em", marginBottom: "20px"}}>
+                                    ✅ {translations[language].thanksMessage}
+                                </h2>
+
+                                <button onClick={() => window.location.href = "/"}
+                                        style={{
+                                            marginTop: "20px",
+                                            padding: "15px 30px",
+                                            fontSize: "1.2em",
+                                            backgroundColor: "#007bff",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "8px",
+                                            cursor: "pointer",
+                                            transition: "background-color 0.3s ease"
+                                        }}
+                                >
+                                    OK
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+
                 </section>
 
                 {/* Contact Section */}
@@ -320,6 +475,8 @@ export default function Home() {
                 {/*        Email*/}
                 {/*    </a>*/}
                 {/*</section>*/}
+
+
             </main>
 
             <style jsx>{`
@@ -513,8 +670,7 @@ export default function Home() {
                         font-size: 22px;
                     }
                 }
-                
-                
+
 
                 .submit-info {
                     position: relative;
@@ -634,7 +790,7 @@ export default function Home() {
 
                     top: 5%;
                     right: 90%;
-                    
+
                     width: 60px;
                     height: 60px;
                     display: flex;
@@ -688,7 +844,19 @@ export default function Home() {
                     opacity: 1;
                 }
 
+                .date-picker {
+                    width: 100%;
+                    padding: 10px;
+                    font-size: 45px;
+                    border: 2px solid #ddd;
+                    border-radius: 5px;
+                    outline: none;
+                    transition: border 0.3s ease-in-out;
+                }
 
+                .date-picker:focus {
+                    border-color: #007bff;
+                }
 
             `}</style>
         </>
