@@ -11,6 +11,7 @@ export default function Home() {
             heroTitle: "Your Perfect Escape",
             stars: "⭐⭐⭐⭐⭐",
             discount: "📢 Get up to 10% OFF when you book directly with us!",
+            discountBox: "Experience comfort and tranquility in our stunning studio.",
             bookNow: "Book Now",
             learnMore: "Learn More",
             about: "About Our Studio",
@@ -25,7 +26,7 @@ export default function Home() {
             ],
             highlight: "💡 Rated 9.1 by couples – Ideal for a romantic escape or a relaxing getaway.",
             formTitle: "Secure Your Stay & Get Up to 10% Off *",
-            formDescription: "Book directly with us and enjoy lower prices compared to Booking.com",
+            formDescription: "Book directly with us and enjoy lower prices compared to ",
             formFields: {
                 name: "Name*",
                 email: "Email*",
@@ -46,6 +47,7 @@ export default function Home() {
             heroTitle: "Tu Escapada Perfecta",
             stars: "⭐⭐⭐⭐⭐",
             discount: "📢 ¡Obtén hasta un 10% de DESCUENTO reservando directamente con nosotros!",
+            discountBox: "Experiencia comodidad y tranquilidad en nuestro estudio impresionante.",
             bookNow: "Reservar Ahora",
             learnMore: "Más Información",
             about: "Sobre Nuestro Estudio",
@@ -60,7 +62,7 @@ export default function Home() {
             ],
             highlight: "💡 Calificación 9.1 por parejas – Ideal para una escapada romántica o un retiro relajante.",
             formTitle: "Asegura tu Estancia & Obtén hasta un 10% de Descuento *",
-            formDescription: "Reserva directamente con nosotros y disfruta de precios más bajos que en Booking.com",
+            formDescription: "Reserva directamente con nosotros y disfruta de precios más bajos que en ",
             formFields: {
                 name: "Nombre*",
                 email: "Correo Electrónico*",
@@ -132,12 +134,33 @@ export default function Home() {
             </Head>
 
 
-
             <main>
                 {/* Language Toggle Button */}
-                <button className="language-toggle" onClick={() => setLanguage(language === "en" ? "es" : "en")}>
-                    {translations[language].languageToggle}
+                {/*<button className="language-toggle" onClick={() => setLanguage(language === "en" ? "es" : "en")}>*/}
+                {/*    {translations[language].languageToggle}*/}
+                {/*</button>*/}
+
+                {/*<button className="language-toggle" onClick={() => setLanguage(language === "en" ? "es" : "en")}>*/}
+                {/*    <h2>{language === "en" ? "🇪🇸 Español" : "🇬🇧 English"}</h2>*/}
+                {/*</button>*/}
+
+                {/*<button className="language-toggle" onClick={() => setLanguage(language === "en" ? "es" : "en")}>*/}
+                {/*    <span className="flag">{language === "en" ? "🇪🇸" : "🇬🇧"}</span>*/}
+                {/*    <span className="text">{language === "en" ? "Español" : "English"}</span>*/}
+                {/*</button>*/}
+
+                {/*<button className="language-toggle" onClick={() => setLanguage(language === "en" ? "es" : "en")}>*/}
+                {/*    <span className="flag">{language === "en" ? "🇪🇸" : "🇬🇧"}</span>*/}
+                {/*</button>*/}
+
+                <button
+                    className="language-toggle"
+                    onClick={() => setLanguage(language === "en" ? "es" : "en")}
+                    data-tooltip={language === "en" ? "Cambia a Español" : "Switch to English"}
+                >
+                    <span className="flag">{language === "en" ? "🇪🇸" : "🇬🇧"}</span>
                 </button>
+
 
                 {/* Hero Section */}
                 <section className="hero">
@@ -157,18 +180,18 @@ export default function Home() {
 
                         {/* Discount Offer */}
                         <div className="hero-subtitle">
-                            <p>📢 Get up to <strong>10% OFF</strong> when you book directly with us!</p>
+                            <p>{translations[language].discount}</p>
                         </div>
 
                         <a href="#submit-info" className="cta-button hero-subtitle">
-                            Book Now
+                            {translations[language].bookNow}
                         </a>
 
                         <p className="discount-box">
-                            Experience comfort and tranquility in our stunning studio.
+                            {translations[language].discountBox}
                         </p>
                         <a href="#details" className="cta-button">
-                            Learn More
+                            {translations[language].learnMore}
                         </a>{" "}
 
                     </div>
@@ -176,76 +199,78 @@ export default function Home() {
 
                 {/* Details Section */}
                 <section id="details" className="details">
-                    <h2>About Our Studio</h2>
+                    <h2>{translations[language].about}</h2>
 
-                    <p className="intro">Your Dream Stay in Benalmádena</p>
+                    <p className="intro">{translations[language].intro}</p>
 
-                    <p>Welcome to <strong>Premium Studio Minerva 103</strong>, a newly
-                        renovated <strong>retreat</strong> designed for your relaxation.</p>
-                    <p>Nestled in the heart
-                        of <strong>Benalmádena</strong>, just <strong>650m from the beach</strong>, this studio offers
-                        a <strong>perfect blend of elegance, comfort, and convenience</strong></p>
+                    <p>{translations[language].description}</p>
 
-                    <h2>Why Choose This Stay?</h2>
+                    <h3>Why Choose This Stay?</h3>
+
+                    {/*<ul className="features">*/}
+                    {/*    <li><strong>🌅 Breathtaking Sea Views</strong> – Enjoy morning coffee or sunset drinks from your*/}
+                    {/*        private balcony.*/}
+                    {/*    </li>*/}
+                    {/*    <li><strong>🏊‍♂️ Exclusive Pool Complex</strong> – Multiple outdoor pools, a <strong>water*/}
+                    {/*        park</strong>, and sun loungers for the perfect holiday vibe.*/}
+                    {/*    </li>*/}
+                    {/*    <li><strong>🍽️ Fully Equipped Kitchen</strong> – Everything you need, including a <strong>microwave,*/}
+                    {/*        toaster, and washing machine</strong>.*/}
+                    {/*    </li>*/}
+                    {/*    <li><strong>❄️ Comfort</strong> – <strong>Air conditioning & heating</strong>,*/}
+                    {/*        high-speed <strong>Wi-Fi</strong>, and a <strong>modern, stylish interior</strong>.*/}
+                    {/*    </li>*/}
+                    {/*    <li><strong>📍 Prime Location</strong> – <strong>Minutes from the beach, restaurants, and Puerto*/}
+                    {/*        Marina</strong>. Easy access to Málaga Airport (12km).*/}
+                    {/*    </li>*/}
+                    {/*</ul>*/}
 
                     <ul className="features">
-                        <li><strong>🌅 Breathtaking Sea Views</strong> – Enjoy morning coffee or sunset drinks from your
-                            private balcony.
-                        </li>
-                        <li><strong>🏊‍♂️ Exclusive Pool Complex</strong> – Multiple outdoor pools, a <strong>water
-                            park</strong>, and sun loungers for the perfect holiday vibe.
-                        </li>
-                        <li><strong>🍽️ Fully Equipped Kitchen</strong> – Everything you need, including a <strong>microwave,
-                            toaster, and washing machine</strong>.
-                        </li>
-                        <li><strong>❄️ Comfort</strong> – <strong>Air conditioning & heating</strong>,
-                            high-speed <strong>Wi-Fi</strong>, and a <strong>modern, stylish interior</strong>.
-                        </li>
-                        <li><strong>📍 Prime Location</strong> – <strong>Minutes from the beach, restaurants, and Puerto
-                            Marina</strong>. Easy access to Málaga Airport (12km).
-                        </li>
+                        {translations[language].features.map((feature, index) => (
+                            <p key={index}>{feature}</p>
+                        ))}
                     </ul>
 
-                    <p className="highlight">💡 <strong>Rated 9.1 by couples</strong> – Ideal for a romantic escape or a
-                        relaxing getaway.</p>
+
+                    <p className="highlight">💡 {translations[language].highlight}</p>
                     <br/>
 
                     <a href="#submit-info" className="cta-button">
-                        Book Now
+                        {translations[language].bookNow}
                     </a>
                 </section>
 
                 <section id="submit-info" className="submit-info">
-                    <h1>Secure Your Stay & Get Up to 10% Off *</h1>
-                    <p>Book directly with us and enjoy lower prices compared to <a
+                    <h1>{translations[language].formTitle}</h1>
+                    <p>{translations[language].formDescription} <a
                         href="https://www.booking.com/hotel/es/nuevo-premium-studio-con-piscina-minerva-jupiter.en-gb.html"
                         target="_blank">Booking.com</a>
                     </p>
 
 
-                    <Link
-                        href="https://www.booking.com/hotel/es/nuevo-premium-studio-con-piscina-minerva-jupiter.en-gb.html">
-                        Booking.com.
-                    </Link>
+                    {/*<Link*/}
+                    {/*    href="https://www.booking.com/hotel/es/nuevo-premium-studio-con-piscina-minerva-jupiter.en-gb.html">*/}
+                    {/*    Booking.com.*/}
+                    {/*</Link>*/}
 
                     <form onSubmit={handleSubmit} className="booking-form">
-                        <label>Name*</label>
+                        <label>{translations[language].formFields.name}</label>
                         <input type="text" name="name" required onChange={handleChange}/>
 
-                        <label>Email*</label>
+                        <label>{translations[language].formFields.email}</label>
                         <input type="email" name="email" required onChange={handleChange}/>
 
-                        <label>Phone / WhatsApp (Optional)</label>
+                        <label>{translations[language].formFields.phone}</label>
                         <input type="tel" name="phone" onChange={handleChange}/>
 
 
-                        <label>Check-in Date*</label>
+                        <label>{translations[language].formFields.checkin}</label>
                         <input type="date" name="checkin" required onChange={handleChange}/>
 
-                        <label>Check-out Date*</label>
+                        <label>{translations[language].formFields.checkout}</label>
                         <input type="date" name="checkout" required onChange={handleChange}/>
 
-                        <label>Number of Guests*</label>
+                        <label>{translations[language].formFields.guests}</label>
                         <select name="guests" required onChange={handleChange}>
                             {[...Array(4).keys()].map((num) => (
                                 <option key={num + 1} value={num + 1}>
@@ -254,13 +279,13 @@ export default function Home() {
                             ))}
                         </select>
 
-                        <label>Special Requests</label>
+                        <label>{translations[language].formFields.message}</label>
                         <textarea name="message" rows="3" onChange={handleChange}></textarea>
 
-                        <button type="submit">Submit Booking Request</button>
-                        <p>* 5% off for less than 7 nights, 10% off for more than 7 nights</p>
+                        <button type="submit">{translations[language].formFields.submit}</button>
+                        <p>{translations[language].discountNote}</p>
 
-                        {submitted && <p className="success-message">Thank you! We will contact you soon.</p>}
+                        {submitted && <p className="success-message">{translations[language].successMessage}</p>}
                     </form>
                 </section>
 
@@ -469,7 +494,27 @@ export default function Home() {
                     .details p {
                         font-size: 1em;
                     }
+
+                    .language-toggle {
+                        bottom: 15px; /* Move slightly higher on small screens */
+                        right: 7px; /* Adjust spacing */
+                        width: 50px; /* Slightly smaller button */
+                        height: 50px;
+                        font-size: 20px; /* Smaller flag */
+                    }
                 }
+
+                @media (max-width: 480px) {
+                    .language-toggle {
+                        bottom: 10px; /* Even higher to avoid mobile UI elements */
+                        right: 10px;
+                        width: 45px;
+                        height: 45px;
+                        font-size: 22px;
+                    }
+                }
+                
+                
 
                 .submit-info {
                     position: relative;
@@ -528,6 +573,122 @@ export default function Home() {
                     left: 0;
                     top: 0;
                 }
+
+                //.language-toggle {
+                //    display: flex;
+                //    align-items: center;
+                //    background-color: transparent;
+                //    border: none;
+                //    font-size: 16px;
+                //    font-weight: bold;
+                //    cursor: pointer;
+                //    transition: 0.3s;
+                //}
+                //
+                //.language-toggle:hover {
+                //    opacity: 0.7;
+                //}
+
+
+                //.language-toggle {
+                //    display: flex;
+                //    align-items: center;
+                //    justify-content: center;
+                //    gap: 8px; /* Space between flag and text */
+                //    padding: 10px 16px;
+                //    font-size: 18px;
+                //    font-weight: bold;
+                //    color: #fff;
+                //    background-color: #007bff; /* Standard blue for buttons */
+                //    border: 2px solid transparent;
+                //    border-radius: 8px;
+                //    cursor: pointer;
+                //    transition: all 0.3s ease-in-out;
+                //    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                //}
+                //
+                //.language-toggle:hover {
+                //    background-color: #0056b3; /* Darker blue on hover */
+                //    transform: scale(1.05); /* Slight zoom-in effect */
+                //    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+                //}
+                //
+                //.language-toggle:active {
+                //    background-color: #004494; /* Even darker blue when clicked */
+                //    transform: scale(0.98); /* Slight press effect */
+                //}
+                //
+                //.flag {
+                //    font-size: 24px;
+                //}
+                //
+                //.text {
+                //    font-size: 18px;
+                //}
+
+
+                .language-toggle {
+                    position: fixed;
+                    //bottom: 800px;
+                    //right: 850px;
+
+                    top: 5%;
+                    right: 90%;
+                    
+                    width: 60px;
+                    height: 60px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: rgba(243, 255, 73, 0.34); /* Primary Blue */
+                    color: white;
+                    font-size: 42px; /* Bigger flag */
+                    border: none;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    transition: all 0.3s ease-in-out;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                    z-index: 1000;
+                }
+
+                //.language-toggle {
+                //    top: 50%;
+                //    right: 20px;
+                //    transform: translateY(-50%);
+                //}
+
+
+                .language-toggle:hover {
+                    background-color: #0056b3; /* Darker blue on hover */
+                    transform: scale(1.1); /* Slight zoom effect */
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+                }
+
+                .language-toggle:active {
+                    background-color: #004494; /* Even darker when clicked */
+                    transform: scale(0.95); /* Slight press effect */
+                }
+
+                .language-toggle::after {
+                    content: attr(data-tooltip);
+                    position: absolute;
+                    bottom: 70px;
+                    background: rgba(0, 0, 0, 0.7);
+                    color: white;
+                    font-size: 14px;
+                    padding: 6px 10px;
+                    border-radius: 5px;
+                    white-space: nowrap;
+                    opacity: 0;
+                    transition: opacity 0.2s;
+                    pointer-events: none;
+                }
+
+                .language-toggle:hover::after {
+                    opacity: 1;
+                }
+
+
 
             `}</style>
         </>
